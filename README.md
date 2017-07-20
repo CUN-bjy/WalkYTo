@@ -1,13 +1,12 @@
 # WalkYTo
-Walk Yourself, Toddler!
+### :Walk Yourself, Toddler!
 
-Hanyang University, Robotics
+Hanyang University, Robotics, CPS & AI LAB
 
 Undergraduate Researcher Program
+>Junyeob Beak, Hyeonwoo Park, Seunghwan Yu
 
-Junyeob Beak, Hyeonwoo Park, Seunghwan Yu
-
-wnsdlqjtm@naver.com /           /
+>wnsdlqjtm@naver.com /           /
 
 #### Nessesary for user to launch this project.
 - "gazebo_ros_pkgs" for graphic simulation

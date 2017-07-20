@@ -2,7 +2,9 @@
 Walk Yourself, Toddler!
 
 Hanyang University, Robotics
+
 Undergraduate Researcher Program
+
 Junyeob Beak, Hyeonwoo Park, Seunghwan Yu
 
 wnsdlqjtm@naver.com /           /

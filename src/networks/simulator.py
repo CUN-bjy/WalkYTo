@@ -1,5 +1,6 @@
 import neat
 import os, pickle, sys
+import rospy
 
 def simulate(config_file):
 	config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
@@ -18,6 +19,8 @@ def simulate(config_file):
 
 
 if __name__ == '__main__':
+	rospy.init_node('simulator', anonymous=True)	
+
 	local_dir = os.path.dirname(__file__)
 	config_path = os.path.join(local_dir, 'config-feedforward')
 

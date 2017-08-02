@@ -29,7 +29,7 @@ def gene_management(genomes):
 	return os.listdir("./genes")
 
 
-def fitness(sam_num):
+def fitness(state):
 	dist = 1
 	return dist
 
@@ -41,10 +41,11 @@ def eval_genomes(genomes, config):
 		sample3 = genes.pop(); sample4 = genes.pop()
 		print(sample1, sample2, sample3, sample4)
 
-		sim(1, sample1); sim(2, sample2); sim(3, sample3); sim(4, sample4)
+		gene_id_caller(1, sample1); gene_id_caller(2, sample2)
+		gene_id_caller(3, sample3); gene_id_caller(4, sample4)
 		wait(60)
-		fit1 = fitness(1); fit2 = fitness(2)
-		fit3 = fitness(3); fit4 = fitness(4)
+		fit1 = fitness(state_getter(1)); fit2 = fitness(state_getter(2))
+		fit3 = fitness(state_getter(3)); fit4 = fitness(state_getter(4))
 		print(fit1, fit2, fit3, fit4)
 
 		for genome_id, genome in genomes:

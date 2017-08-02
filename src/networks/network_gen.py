@@ -1,22 +1,62 @@
 """ WalkYTo:Walk Yourself, Toddler!"""
-import os
-import neat
-import visualize
+import os, pickle
+import rospy
+import neat, visualize
+
+
+if not os.path.exists("./genes"):
+		os.makedirs("./genes", 0755)
+
+def gene_management(genomes):
+	genome_list = []
+	genes_list = os.listdir("./genes")
+	for genome_id, genome in genomes:
+		genome_list.append(str(genome.key))
+		genome.fitness = 1
+
+	s1 = set(genes_list); s2 = set(genome_list)
+	add_list = [x for x in genome_list if x not in s1]
+	rm_list = [x for x in genes_list if x not in s2]
+
+	for rm_file in rm_list:
+		os.remove("./genes/%s" % rm_file)
+
+	for genome_id, genome in genomes:
+		if(str(genome_id) in add_list):
+			gen_file = open('./genes/%d' % genome_id ,'w')
+			pickle.dump(genome, gen_file)
+
+	return os.listdir("./genes")
+
+
+def fitness(sam_num):
+	dist = 1
+	return dist
 
 def eval_genomes(genomes, config):
-    for genome_id, genome in genomes:
-		# if not os.path.exists("./gens"):
-		#     os.makedirs("./gens", 0755)
+	genes = gene_management(genomes)
 
-		# gen_file = open('./gens/%d' % genome_id ,'w')
-		# pickle.dump(genome, gen_file)
-	    	net = neat.nn.FeedForwardNetwork.create(genome, config)
-		while(time<60):
-			joint_states = state_getter()
-			joint_efforts = net.activate(joint_states)
-			efforts_caller(joint_efforts)
+	while(genes != []):
+		sample1 = genes.pop(); sample2 = genes.pop()
+		sample3 = genes.pop(); sample4 = genes.pop()
+		print(sample1, sample2, sample3, sample4)
 
-	genome.fitness = fitness(imu_reader())
+		sim(1, sample1); sim(2, sample2); sim(3, sample3); sim(4, sample4)
+		wait(60)
+		fit1 = fitness(1); fit2 = fitness(2)
+		fit3 = fitness(3); fit4 = fitness(4)
+		print(fit1, fit2, fit3, fit4)
+
+		for genome_id, genome in genomes:
+			if(str(genome_id) == sample1):
+				genome.fitness = fit1
+			elif(str(genome_id) == sample2):
+				genome.fitness = fit2
+			elif(str(genome_id) == sample3):
+				genome.fitness = fit3
+			elif(str(genome_id) == sample4):
+				genome.fitness = fit4
+
 
 
 def run(config_file):
@@ -57,6 +97,8 @@ if __name__ == '__main__':
     # Determine path to configuration file. This path manipulation is
     # here so that the script will run successfully regardless of the
     # current working directory.
-    local_dir = os.path.dirname(__file__)
-    config_path = os.path.join(local_dir, 'config-feedforward')
-    run(config_path)
+	rospy.init_node('network_gen', anonymous=True)	
+
+	local_dir = os.path.dirname(__file__)
+	config_path = os.path.join(local_dir, 'config-feedforward')
+	run(config_path)

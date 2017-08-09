@@ -36,17 +36,20 @@ def fitness(state):
 def eval_genomes(genomes, config):
 	genes = gene_management(genomes)
 
+	u=1
 	while(genes != []):
 		sample1 = genes.pop(); sample2 = genes.pop()
 		sample3 = genes.pop(); sample4 = genes.pop()
+		print("simulation_%d(%d/80)"%(u,4*u));u = u+1
 		print(sample1, sample2, sample3, sample4)
 
-		gene_id_caller(1, sample1); gene_id_caller(2, sample2)
-		gene_id_caller(3, sample3); gene_id_caller(4, sample4)
-		wait(60)
-		fit1 = fitness(state_getter(1)); fit2 = fitness(state_getter(2))
-		fit3 = fitness(state_getter(3)); fit4 = fitness(state_getter(4))
-		print(fit1, fit2, fit3, fit4)
+		# gene_id_caller(1, sample1); gene_id_caller(2, sample2)
+		# gene_id_caller(3, sample3); gene_id_caller(4, sample4)
+		# wait(60)
+		fit1=1;fit2=1;fit3=1;fit4=1
+		# fit1 = fitness(state_getter(1)); fit2 = fitness(state_getter(2))
+		# fit3 = fitness(state_getter(3)); fit4 = fitness(state_getter(4))
+		print("fit1=%f, fit2=%f, fit3=%f, fit4=%f\n" % (fit1, fit2, fit3, fit4))
 
 		for genome_id, genome in genomes:
 			if(str(genome_id) == sample1):
@@ -98,7 +101,7 @@ if __name__ == '__main__':
     # Determine path to configuration file. This path manipulation is
     # here so that the script will run successfully regardless of the
     # current working directory.
-	rospy.init_node('network_gen', anonymous=True)	
+	# rospy.init_node('network_gen', anonymous=True)	
 
 	local_dir = os.path.dirname(__file__)
 	config_path = os.path.join(local_dir, 'config-feedforward')

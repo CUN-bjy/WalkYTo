@@ -1,4 +1,4 @@
-import neat
+import neat, visualize
 import os, pickle, sys
 import rospy
 
@@ -7,20 +7,20 @@ def simulate(config_file):
 						neat.DefaultSpeciesSet, neat.DefaultStagnation,
 						config_file)
 
-	while(True):
-		gene_id = gene_id_getter()
-		gene_f = open('./genes/%s' % gene_id)
-		genome = pickle.load(gene_f)
+	# while(True):
+	gene_id = 4 #gene_id_getter()
+	gene_f = open('./genes/%s' % gene_id)
+	genome = pickle.load(gene_f)
 
-		net = neat.nn.FeedForwardNetwork.create(genome, config)
-		gazebo_init()
+	net = neat.nn.FeedForwardNetwork.create(genome, config)
+		# gazebo_init()
 
-		while(time < 60):
-			joint_states = state_getter()
-			joint_efforts = net.activate(joint_states)
-			efforts_caller(joint_efforts)
+		# while(time < 60):
+		# 	joint_states = state_getter()
+		# 	joint_efforts = net.activate(joint_states)
+		# 	efforts_caller(joint_efforts)
 
-		gazebo_exit()
+		# gazebo_exit()
 
 
 if __name__ == '__main__':

@@ -3,6 +3,8 @@ import os, pickle
 import rospy
 import neat, visualize
 
+from walkyto.srv import *
+
 
 if not os.path.exists("./genes"):
 		os.makedirs("./genes", 0755)
@@ -33,6 +35,20 @@ def fitness(state):
 	dist = 1
 	return dist
 
+def gene_id_caller(num, gene_id):
+	rospy.wait_for_service('sim_run')
+	try:
+		# create a handle to the add_two_ints service
+		Sim_Run = rospy.ServiceProxy('sim_run', SimRun)
+
+		# formal style
+		resp = Sim_Run.call(SimRunRequest(int(gene_id)))
+
+		return resp.distance
+
+	except rospy.ServiceException, e:
+		print "Service call failed: %s"%e
+
 def eval_genomes(genomes, config):
 	genes = gene_management(genomes)
 
@@ -43,12 +59,11 @@ def eval_genomes(genomes, config):
 		print("simulation_%d(%d/80)"%(u,4*u));u = u+1
 		print(sample1, sample2, sample3, sample4)
 
-		# gene_id_caller(1, sample1); gene_id_caller(2, sample2)
+		fit1 = gene_id_caller(1, sample1); #gene_id_caller(2, sample2)
 		# gene_id_caller(3, sample3); gene_id_caller(4, sample4)
-		# wait(60)
-		fit1=1;fit2=1;fit3=1;fit4=1
-		# fit1 = fitness(state_getter(1)); fit2 = fitness(state_getter(2))
-		# fit3 = fitness(state_getter(3)); fit4 = fitness(state_getter(4))
+
+		fit2=1;fit3=1;fit4=1
+		
 		print("fit1=%f, fit2=%f, fit3=%f, fit4=%f\n" % (fit1, fit2, fit3, fit4))
 
 		for genome_id, genome in genomes:
@@ -102,7 +117,8 @@ if __name__ == '__main__':
     # here so that the script will run successfully regardless of the
     # current working directory.
 	# rospy.init_node('network_gen', anonymous=True)	
-
+	rospy.init_node('network_gen')
+	
 	local_dir = os.path.dirname(__file__)
 	config_path = os.path.join(local_dir, 'config-feedforward')
 	run(config_path)

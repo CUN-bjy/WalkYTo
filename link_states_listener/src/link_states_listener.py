@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 import rospy
 from gazebo_msgs.msg import LinkStates
+import math
 
 def callback(data):
     # print(data.name)
@@ -10,8 +11,8 @@ def callback(data):
     joint_velocity_list = []
 
     a= data.twist[data.name.index('MS_Faraday_imu::ML-0')].angular
-    b = a.x**2+a.y**2+a.z**2
-	#print(b)
+    b = math.sqrt(a.x**2+a.y**2+a.z**2)
+    print(b)
 
     #for joint_name in joint_name_list:
 

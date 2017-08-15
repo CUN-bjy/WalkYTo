@@ -14,7 +14,6 @@ def gene_management(genomes):
 	genes_list = os.listdir("./genes")
 	for genome_id, genome in genomes:
 		genome_list.append(str(genome.key))
-		genome.fitness = 1
 
 	s1 = set(genes_list); s2 = set(genome_list)
 	add_list = [x for x in genome_list if x not in s1]
@@ -29,11 +28,6 @@ def gene_management(genomes):
 			pickle.dump(genome, gen_file)
 
 	return os.listdir("./genes")
-
-
-def fitness(state):
-	dist = 1
-	return dist
 
 def gene_id_caller(num, gene_id):
 	rospy.wait_for_service('sim_run')
@@ -56,7 +50,7 @@ def eval_genomes(genomes, config):
 	while(genes != []):
 		sample1 = genes.pop(); sample2 = genes.pop()
 		sample3 = genes.pop(); sample4 = genes.pop()
-		print("simulation_%d(%d/80)"%(u,4*u));u = u+1
+		print("simulation_%d(%d/80)"%(u,4*u)); u = u+1
 		print(sample1, sample2, sample3, sample4)
 
 		fit1 = gene_id_caller(1, sample1); #gene_id_caller(2, sample2)

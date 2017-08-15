@@ -2,7 +2,7 @@
 
 [NEAT]
 fitness_criterion     = max
-fitness_threshold     = 3.9
+fitness_threshold     = 1
 pop_size              = 80
 reset_on_extinction   = False
 
@@ -36,7 +36,7 @@ conn_delete_prob        = 0.5
 
 # connection enable options
 enabled_default         = True
-enabled_mutate_rate     = 0.01
+enabled_mutate_rate     = 0.05
 
 feed_forward            = True
 initial_connection      = full
@@ -46,8 +46,8 @@ node_add_prob           = 0.2
 node_delete_prob        = 0.2
 
 # network parameters
-num_hidden              = 15
-num_inputs              = 31
+num_hidden              = 10
+num_inputs              = 11
 num_outputs             = 10
 
 # node response options

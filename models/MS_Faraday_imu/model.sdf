@@ -1065,7 +1065,7 @@
         </surface>
       </collision>
     </link>
-    <link name='ML-5'>
+    <link name='ML-4'>
       <pose frame=''>1.28946 -3.5769 0.5 0 -0 0</pose>
       <inertial>
         <mass>1</mass>
@@ -2460,7 +2460,7 @@
     </joint>
     <joint name='4' type='revolute'>
       <parent>L4</parent>
-      <child>ML-5</child>
+      <child>ML-4</child>
       <pose frame=''>0 0 0 0 -0 0</pose>
       <axis>
         <xyz>0 -1 0</xyz>
@@ -2776,7 +2776,7 @@
       </physics>
     </joint>
     <joint name='F5' type='fixed'>
-      <parent>ML-5</parent>
+      <parent>ML-4</parent>
       <child>L5</child>
       <pose frame=''>0 0 0 0 -0 0</pose>
       <physics>

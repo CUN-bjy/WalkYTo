@@ -3,8 +3,8 @@
     <arg name="world_name" value="$(find walkyto)/worlds/bell_and_faraday.world"/>
     <!-- more default parameters can be changed here -->
   </include>
-<!-- 
-  <node name="simulator" pkg="walkyto" type="	simulator.py" output="screen"/>
+
+  <node name="simulator" pkg="walkyto" type="simulator.py" output="screen"/>
   <node name="network_gen" pkg="walkyto" type="network_gen.py" output="screen"/>
- -->
+
 </launch>

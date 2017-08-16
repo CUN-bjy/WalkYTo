@@ -28,18 +28,6 @@ def callback(data):
     print(vel_list)
 
 
-    # print(data.twist[data.name.index('MS_Faraday_imu::ML-1')])
-    # print(data.twist[data.name.index('MS_Faraday_imu::ML-2')])
-    # print(data.twist[data.name.index('MS_Faraday_imu::ML-3')])
-    # print(data.twist[data.name.index('MS_Faraday_imu::ML-4')])
-    # print(data.twist[data.name.index('MS_Faraday_imu::MR-5')])
-    # print(data.twist[data.name.index('MS_Faraday_imu::MR-6')])
-    # print(data.twist[data.name.index('MS_Faraday_imu::MR-7')])
-    # print(data.twist[data.name.index('MS_Faraday_imu::MR-8')])
-    # print(data.twist[data.name.index('MS_Faraday_imu::MR-9')])
-
-
-
 def listener():
     rospy.init_node('link_states',anonymous = True)
     # gazebo_msgs/LinkStates --> rostopic type

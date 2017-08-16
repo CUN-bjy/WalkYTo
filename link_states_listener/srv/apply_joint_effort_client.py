@@ -24,9 +24,9 @@ def apply_joint_effort(joint_name, effort, start_time, duration ):
         print "Service call failed: %s"%e
 
 if __name__ == "__main__":
-	joint_name1 = 'MS_Faraday_HW::1'
-	joint_name2 = 'MS_Faraday_HW_0::1'
-	effort = 20000
+	joint_name1 = 'MS_Faraday_imu::1'
+	joint_name2 = 'MS_Faraday_imu::2'
+	effort = 0
 	start_time = time(0,0)
 	duration = time(-1,-1)
 

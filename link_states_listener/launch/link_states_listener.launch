@@ -1,3 +1,0 @@
-<launch>
-  <node name="link_states" pkg="link_states_listener" type="link_states_listener.py" output="screen"/>
-</launch>

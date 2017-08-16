@@ -4,7 +4,7 @@ import os
 import rospy
 from gazebo_msgs.srv import *
 
-class initial_pose :
+class pose :
 	def __init__(self, position, orientation):
 		self.position = position
 		self.orientation = orientation
@@ -31,19 +31,19 @@ def spawn_model(model_name, model_xml, robot_namespace, initial_pose, reference_
         
         # simplified style
         resp1 = spawn_model(model_name, model_xml, robot_namespace, initial_pose, reference_frame)
-        print(resp1.success)
+        # print(resp1.success)
         print(resp1.status_message)
     except rospy.ServiceException, e:
         print "Service call failed: %s"%e
 
-if __name__ == "__main__":
-	model_name1 = 'MR_bell_imu'
-	sdf_file =  open('/home/seunghwanyu/catkin_ws/src/WalkYTo/models/MR_bell_imu/MR_bell_imu_model.sdf','r')
-	model_xml1 = sdf_file.read()
-	robot_namespace1 = 'MR_bell_imu'
-	position1 = position(1,1,0)
-	orientation1 = orientation(0, 0, 0, 0)
-	initial_pose1 = initial_pose(position1, orientation1)
-	reference_frame1 = ''
+# if __name__ == "__main__":
+# 	model_name1 = 'MR_bell_imu'
+# 	sdf_file =  open('/home/seunghwanyu/catkin_ws/src/WalkYTo/models/MR_bell_imu/MR_bell_imu_model.sdf','r')
+# 	model_xml1 = sdf_file.read()
+# 	robot_namespace1 = 'MR_bell_imu'
+# 	position1 = position(1,1,0)
+# 	orientation1 = orientation(0, 0, 0, 0)
+# 	initial_pose1 = initial_pose(position1, orientation1)
+# 	reference_frame1 = ''
 
-	spawn_model(model_name1, model_xml1, robot_namespace1, initial_pose1, reference_frame1)
+# 	spawn_model(model_name1, model_xml1, robot_namespace1, initial_pose1, reference_frame1)

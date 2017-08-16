@@ -1,4 +1,4 @@
-""" WalkYTo:Walk Yourself, Toddler!"""
+#!/usr/bin/env python
 import os, pickle
 import rospy
 import neat, visualize

@@ -13,11 +13,11 @@ def delete_model(model_name):
         
         # simplified style
         resp1 = delete_model(model_name)
-        print(resp1.success)
+        # print(resp1.success)
         print(resp1.status_message)
     except rospy.ServiceException, e:
         print "Service call failed: %s"%e
 
-if __name__ == "__main__":
-	model_name1 = 'MR_bell_imu'
-	delete_model(model_name1)
+# if __name__ == "__main__":
+# 	model_name1 = 'MR_bell_imu'
+# 	delete_model(model_name1)

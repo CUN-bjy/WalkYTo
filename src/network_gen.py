@@ -30,10 +30,10 @@ def gene_management(genomes):
 	return os.listdir("./genes")
 
 def gene_id_caller(num, gene_id):
-	rospy.wait_for_service('sim_run')
+	rospy.wait_for_service('sim_run%d'%num)
 	try:
 		# create a handle to the add_two_ints service
-		Sim_Run = rospy.ServiceProxy('sim_run', SimRun)
+		Sim_Run = rospy.ServiceProxy('sim_run%d'%num, SimRun)
 
 		# formal style
 		resp = Sim_Run.call(SimRunRequest(int(gene_id)))
@@ -46,29 +46,21 @@ def gene_id_caller(num, gene_id):
 def eval_genomes(genomes, config):
 	genes = gene_management(genomes)
 
-	u=1
+	u=1; dup_num = 4
 	while(genes != []):
-		sample1 = genes.pop(); sample2 = genes.pop()
-		sample3 = genes.pop(); sample4 = genes.pop()
-		print("simulation_%d(%d/80)"%(u,4*u)); u = u+1
-		print(sample1, sample2, sample3, sample4)
+		print("simulation(%d/80)"%(dup_num*u)); u = u+1
 
-		fit1 = gene_id_caller(1, sample1); #gene_id_caller(2, sample2)
-		# gene_id_caller(3, sample3); gene_id_caller(4, sample4)
-
-		fit2=1;fit3=1;fit4=1
+		sample_list = []; fit_list = []
+		for i in range(dup_num):
+			sample_list.append(genes.pop())
+			fit_list.append(gene_id_caller(i+1, sample_list[i]))
 		
-		print("fit1=%f, fit2=%f, fit3=%f, fit4=%f\n" % (fit1, fit2, fit3, fit4))
+		print("gene_id:", sample_list)
+		print("fit:", fit_list)
 
 		for genome_id, genome in genomes:
-			if(str(genome_id) == sample1):
-				genome.fitness = fit1
-			elif(str(genome_id) == sample2):
-				genome.fitness = fit2
-			elif(str(genome_id) == sample3):
-				genome.fitness = fit3
-			elif(str(genome_id) == sample4):
-				genome.fitness = fit4
+			if str(genome_id) in sample_list:
+				genome.fitness = fit_list[sample_list.index(str(genome_id))]
 
 
 

@@ -4,6 +4,7 @@ import rospy
 import neat, visualize
 
 from walkyto.srv import *
+from std_msgs.msg import String
 
 
 if not os.path.exists("./genes"):
@@ -27,40 +28,54 @@ def gene_management(genomes):
 			gen_file = open('./genes/%d' % genome_id ,'w')
 			pickle.dump(genome, gen_file)
 
-	return os.listdir("./genes")
+def gene_id_publisher(gene_string):
+	pub = rospy.Publisher('gene_pub', String, queue_size=10)
+	pub.publish(gene_string)
 
-def gene_id_caller(num, gene_id):
-	rospy.wait_for_service('sim_run%d'%num)
+def fit_caller(channel):
+	rospy.wait_for_service('sim_run%d'%channel)
 	try:
-		# create a handle to the add_two_ints service
-		Sim_Run = rospy.ServiceProxy('sim_run%d'%num, SimRun)
+		Sim_Run = rospy.ServiceProxy('sim_run%d' % channel, SimRun)
 
-		# formal style
-		resp = Sim_Run.call(SimRunRequest(int(gene_id)))
+		resp = Sim_Run.call(SimRunRequest(True))
 
-		return resp.distance
+		if resp.success:
+			return resp.distance
+		else:
+			return -1
 
 	except rospy.ServiceException, e:
 		print "Service call failed: %s"%e
 
 def eval_genomes(genomes, config):
-	genes = gene_management(genomes)
+	gene_management(genomes)
+	id_list = []; gene_list = []
+	for gene_id, gene in genomes:
+		id_list.append(gene_id)
+		gene_list.append(gene)
 
-	u=1; dup_num = 4
-	while(genes != []):
-		print("simulation(%d/80)"%(dup_num*u)); u = u+1
+	u = 0; dup_num = 4
+	while(id_list != []):
+		print("simulation(%d/80)"%(dup_num*(u+1)))
 
-		sample_list = []; fit_list = []
-		for i in range(dup_num):
-			sample_list.append(genes.pop())
-			fit_list.append(gene_id_caller(i+1, sample_list[i]))
-		
-		print("gene_id:", sample_list)
+		gene_string = str(id_list[u*dup_num])
+		for i in range(1,dup_num):
+			gene_string = gene_string + '/' + str(id_list[u*dup_num+i])
+
+		fcnt = 1; rate=rospy.Rate(20)# 10hz
+		while fcnt != dup_num:
+			gene_id_publisher(gene_string)
+			fitness = fit_caller(fcnt)
+			if fitness != -1:
+				gene_list[u*dup_num+fcnt].fitness = fitness
+				fcnt = fcnt + 1
+			else:
+				rate.sleep()
+
+		print("gene_id:", gene_string)
 		print("fit:", fit_list)
 
-		for genome_id, genome in genomes:
-			if str(genome_id) in sample_list:
-				genome.fitness = fit_list[sample_list.index(str(genome_id))]
+		u = u+1
 
 
 

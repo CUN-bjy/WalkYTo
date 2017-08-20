@@ -7,6 +7,7 @@ import math, random
 from gazebo_msgs.srv import *
 from gazebo_msgs.msg import *
 from walkyto.srv import *
+from std_msgs.msg import String
 
 from apply_joint_effort_client import *
 from spawn_model_client import *
@@ -21,7 +22,7 @@ class simulator:
 		model_name = '%s_%d' % (self.model_name, self.dup_num)
 		robot_namespace = model_name
 
-		pos = position(0, (self.dup_num-1)*10, 0)
+		pos = position(0, (self.dup_num-1)*14 - (self.total_dup-1)*7, 0)
 		orient = orientation(0, 0, 0, 0)
 		initial_pose = pose(pos, orient)
 		reference_frame=''
@@ -81,8 +82,11 @@ class simulator:
 		except rospy.ServiceException, e:
 			print "Service call failed: %s"%e
 	##############################################################################################################
+	def string_decoder(self, g_str):
+		g_str = str(g_str.data)
+		return g_str.split('/')[self.dup_num-1]
 
-	def call_simulate(self, req):
+	def call_simulate(self, data):
 		local_dir = os.path.dirname(__file__)
 		config_file = os.path.join(local_dir, 'config-feedforward')
 
@@ -90,7 +94,7 @@ class simulator:
 							neat.DefaultSpeciesSet, neat.DefaultStagnation,
 							config_file)
 
-		gene_id = req.gene_id
+		gene_id = self.string_decoder(data)
 		gene_f = open('./genes/%s' % gene_id)
 		genome = pickle.load(gene_f)
 
@@ -107,8 +111,8 @@ class simulator:
 		 	joint_efforts = net.activate(self.joint_states)
 		 	self.efforts_caller(joint_efforts, time(0,400000000))#0.4sec
 
-		 	print "input:", self.joint_states
-		 	print "output:", joint_efforts
+		 	# print "input:", self.joint_states
+		 	# print "output:", joint_efforts
 		 	now = rospy.Time.now()
 		#--------------------------------------------------------------------------------------------------
 		pos_end = self.get_pose()
@@ -116,20 +120,27 @@ class simulator:
 
 		dist = math.sqrt((pos_init.x-pos_end.x)**2+(pos_init.y-pos_end.y)**2+(pos_init.z-pos_end.z)**2)
 
-		return SimRunResponse(dist)
+		self.fitness = dist
 
+	def fit_server(self, req):
+		if self.fitness == None:
+			return SimRunResponse(self.fitness, False)
+		else:
+			return SimRunResponse(self.fitness, True)
 
 	def __init__(self, model_name, dup_t):
-		self.total_dup = dup_t
+		self.total_dup = int(dup_t)
 		self.model_name = model_name[0:-2]
 		self.dup_num = int(model_name[-1])
-		self.joint_states = ''
+		self.joint_states = None
+		self.fitness = None
 
-		rospy.init_node('simulator%d' % self.dup_num)	
-		s = rospy.Service('sim_run%d' % self.dup_num, SimRun, self.call_simulate)
+		rospy.init_node('simulator%d' % self.dup_num)
 
+		rospy.Subscriber('gene_pub', String, self.call_simulate)
 		rospy.Subscriber('/gazebo/link_states', LinkStates, self.state_getter)
 
+		s=rospy.Service('sim_run%d' % self.dup_num, SimRun, self.fit_server)
 		# spin() keeps Python from exiting until node is shutdown
 		rospy.spin()
 

@@ -54,19 +54,24 @@ def eval_genomes(genomes, config):
 		id_list.append(gene_id)
 		gene_list.append(gene)
 
-	u = 0; dup_num = 4
+	u = 0; dup_num = 4;rate=rospy.Rate(40)# 40hz
 	while(id_list != []):
-		print("simulation(%d/80)"%(dup_num*(u+1)))
+		print("***************simulation(%d/80)****************"%(dup_num*(u+1)))
 
 		gene_string = str(id_list[u*dup_num])
 		for i in range(1,dup_num):
 			gene_string = gene_string + '/' + str(id_list[u*dup_num+i])
 
-		fcnt = 1; rate=rospy.Rate(20)# 10hz
-		while fcnt != dup_num:
+		for i in range(5):
 			gene_id_publisher(gene_string)
-			fitness = fit_caller(fcnt)
+			rate.sleep()
+
+		fcnt = 0; 
+		fit_list=[]
+		while fcnt < dup_num:
+			fitness = fit_caller(fcnt+1)
 			if fitness != -1:
+				fit_list.append(fitness)
 				gene_list[u*dup_num+fcnt].fitness = fitness
 				fcnt = fcnt + 1
 			else:

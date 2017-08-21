@@ -2880,7 +2880,10 @@
 
     <plugin name="imu_plugin" filename="libgazebo_ros_imu.so">
       <alwaysOn>true</alwaysOn>
+      <xyzOffset>0 0 0</xyzOffset>
+      <rpyOffset>0 0 0</rpyOffset>
       <bodyName>imu_link</bodyName>
+      <frameName>imu_link</frameName>
       <topicName>Faraday/imu</topicName>
       <serviceName>Faraday/imu_service</serviceName>
       <gaussianNoise>2.89e-08</gaussianNoise>

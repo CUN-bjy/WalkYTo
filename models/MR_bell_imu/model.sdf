@@ -3006,11 +3006,15 @@
     </joint>
     <static>0</static>
     <allow_auto_disable>1</allow_auto_disable>
-    <plugin name='imu_plugin' filename='libgazebo_ros_imu.so'>
+    
+    <plugin name="imu_plugin" filename="libgazebo_ros_imu.so">
       <alwaysOn>true</alwaysOn>
+      <xyzOffset>0 0 0</xyzOffset>
+      <rpyOffset>0 0 0</rpyOffset>
       <bodyName>imu_link</bodyName>
-      <topicName>Bell/imu</topicName>
-      <serviceName>Bell/imu_service</serviceName>
+      <frameName>imu_link</frameName>
+      <topicName>Faraday/imu</topicName>
+      <serviceName>Faraday/imu_service</serviceName>
       <gaussianNoise>2.89e-08</gaussianNoise>
       <updateRate>20.0</updateRate>
     </plugin>

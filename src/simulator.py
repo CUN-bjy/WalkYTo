@@ -106,6 +106,7 @@ class simulator:
 		
 		self.gazebo_init()
 		pos_init = self.get_pose()
+		print pos_init
 		#--------------------------------------------------------------------------------------------------
 		while(then > now):
 		 	joint_efforts = net.activate(self.joint_states)
@@ -117,6 +118,7 @@ class simulator:
 		#--------------------------------------------------------------------------------------------------
 		pos_end = self.get_pose()
 		self.gazebo_exit()
+		print pos_end
 
 		dist = math.sqrt((pos_init.x-pos_end.x)**2+(pos_init.y-pos_end.y)**2+(pos_init.z-pos_end.z)**2)
 
@@ -126,6 +128,8 @@ class simulator:
 		if self.fitness == None:
 			return SimRunResponse(self.fitness, False)
 		else:
+			fitness = self.fitness
+			self.fitness = None
 			return SimRunResponse(self.fitness, True)
 
 	def __init__(self, model_name, dup_t):

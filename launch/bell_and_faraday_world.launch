@@ -4,12 +4,13 @@
   </include>
 
   <arg name="model" value="MS_Faraday_imu"/>
-  <arg name="dup" value="4"/>
+  <arg name="dup" value="1"/>
+  <arg name="pop" value="80">
 
   <node name="simulator1" pkg="walkyto" type="simulator.py" output="screen" args="$(arg model)_1 $(arg dup)"/>
-  <node name="simulator2" pkg="walkyto" type="simulator.py" output="screen" args="$(arg model)_2 $(arg dup)"/>
+<!--   <node name="simulator2" pkg="walkyto" type="simulator.py" output="screen" args="$(arg model)_2 $(arg dup)"/>
   <node name="simulator3" pkg="walkyto" type="simulator.py" output="screen" args="$(arg model)_3 $(arg dup)"/>
-  <node name="simulator4" pkg="walkyto" type="simulator.py" output="screen" args="$(arg model)_4 $(arg dup)"/>
+  <node name="simulator4" pkg="walkyto" type="simulator.py" output="screen" args="$(arg model)_4 $(arg dup)"/> -->
 
   <node name="network_gen" pkg="walkyto" type="network_gen.py" output="screen"/>
 </launch>

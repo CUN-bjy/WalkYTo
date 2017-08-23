@@ -7,12 +7,15 @@ from walkyto.srv import *
 from std_msgs.msg import String
 
 
-if not os.path.exists("./genes"):
-		os.makedirs("./genes", 0755)
+local_dir = os.getenv("WALKYTO_PATH")
+if not os.path.exists("%s/src/genes"%local_dir):
+		os.makedirs("%s/src/genes"%local_dir, 0766)
 
 def gene_management(genomes):
+	local_dir = os.getenv("WALKYTO_PATH")
+
 	genome_list = []
-	genes_list = os.listdir("./genes")
+	genes_list = os.listdir("%s/src/genes"%local_dir)
 	for genome_id, genome in genomes:
 		genome_list.append(str(genome.key))
 
@@ -21,11 +24,11 @@ def gene_management(genomes):
 	rm_list = [x for x in genes_list if x not in s2]
 
 	for rm_file in rm_list:
-		os.remove("./genes/%s" % rm_file)
+		os.remove("%s/src/genes/%s" % (local_dir,rm_file))
 
 	for genome_id, genome in genomes:
 		if(str(genome_id) in add_list):
-			gen_file = open('./genes/%d' % genome_id ,'w')
+			gen_file = open("%s/src/genes/%s" % (local_dir,genome_id),'w')
 			pickle.dump(genome, gen_file)
 
 def gene_id_publisher(gene_string):
@@ -57,8 +60,8 @@ def eval_genomes(genomes, config):
 	dup_num = 4
 	population = 80
 
-	rate1=rospy.Rate(10)# 10hz
-	rate2=rospy.Rate(2)# 2hz
+	rate1=rospy.Rate(5)# 10hz
+	rate2=rospy.Rate(5)# 5hz
 	u = 0; 
 	while(dup_num*(u+1)<=population):
 		print("-----------simulation(%d/%d)--------------"%(dup_num*(u+1), population))

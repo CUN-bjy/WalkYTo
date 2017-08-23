@@ -1,6 +1,6 @@
 <sdf version='1.6'>
   <world name='default'>
-   <!--  <physics name='default_physics' default='0' type='ode'>
+    <physics name='default_physics' default='0' type='ode'>
       <max_step_size>0.001</max_step_size>
       <real_time_factor>1</real_time_factor>
       <real_time_update_rate>1000</real_time_update_rate>
@@ -18,7 +18,7 @@
           <contact_surface_layer>0.001</contact_surface_layer>
         </constraints>
       </ode>
-    </physics> -->
+    </physics>
     <!-- <physics name="ode_200iters" type="ode" default="true">
       <ode>
         <solver>
@@ -28,7 +28,7 @@
       </ode>
     </physics> -->
 
-    <physics name="ode_200iters" type="ode">
+   <!--  <physics name="ode_200iters" type="ode">
       <real_time_update_rate>2000</real_time_update_rate>
       <ode>
        <solver>
@@ -44,7 +44,7 @@
           <contact_surface_layer>0.001</contact_surface_layer>
         </constraints>
       </ode>
-    </physics>
+    </physics> -->
     
     <model name='ground_plane'>
       <static>1</static>

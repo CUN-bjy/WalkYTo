@@ -94,8 +94,9 @@ class simulator:
 							neat.DefaultSpeciesSet, neat.DefaultStagnation,
 							config_file)
 
+		gene_dir = os.getenv("WALKYTO_PATH")
 		gene_id = self.string_decoder(data)
-		gene_f = open('./genes/%s' % gene_id)
+		gene_f = open('%s/src/genes/%s' % (gene_dir, gene_id))
 		genome = pickle.load(gene_f)
 
 		net = neat.nn.FeedForwardNetwork.create(genome, config)

@@ -1,6 +1,9 @@
 <launch>
+  <arg name="GUI" default="false"/>
+
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(find walkyto)/worlds/bell_and_faraday.world"/>
+    <arg name="gui" value="$(arg GUI)"/>
   </include>
 
   <arg name="model" value="MS_Faraday_imu"/>
@@ -12,5 +15,5 @@
   <node name="simulator3" pkg="walkyto" type="simulator.py" output="screen" args="$(arg model)_3 $(arg dup)"/>
   <node name="simulator4" pkg="walkyto" type="simulator.py" output="screen" args="$(arg model)_4 $(arg dup)"/>
 
-  <node name="network_gen" pkg="walkyto" type="network_gen.py" output="screen"/>
+  <node name="network_gen" pkg="walkyto" type="network_gen.py" output="screen" cwd="node"/>
 </launch>

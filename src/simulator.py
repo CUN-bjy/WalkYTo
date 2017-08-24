@@ -87,6 +87,9 @@ class simulator:
 		return g_str.split('/')[self.dup_num-1]
 
 	def call_simulate(self, data):
+		if data.data[0] == '-':
+			return
+
 		local_dir = os.path.dirname(__file__)
 		config_file = os.path.join(local_dir, 'config-feedforward')
 
@@ -110,7 +113,7 @@ class simulator:
 		#--------------------------------------------------------------------------------------------------
 		while(then > now):
 		 	joint_efforts = net.activate(self.joint_states)
-		 	self.efforts_caller(joint_efforts, time(0,400000000))#0.4sec
+		 	self.efforts_caller(joint_efforts, time(0,500000000))#0.5sec
 
 		 	# print "input:", self.joint_states
 		 	# print "output:", joint_efforts

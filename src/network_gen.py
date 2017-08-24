@@ -78,8 +78,7 @@ def eval_genomes(genomes, config):
 		rate1.sleep()
 		
 
-		fcnt = 0; 
-		fit_list=[]
+		fcnt = 0; fit_list=[]
 		while fcnt < dup_num:
 			gene_id_publisher('-%d'%fcnt)
 			fitness = fit_caller(fcnt+1)
@@ -90,6 +89,9 @@ def eval_genomes(genomes, config):
 				fcnt = fcnt + 1
 			else:
 				rate2.sleep()
+
+			if len(gene_list) == 0:
+				break
 
 		
 		print("fit:", fit_list)

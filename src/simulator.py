@@ -83,8 +83,11 @@ class simulator:
 			print "Service call failed: %s"%e
 	##############################################################################################################
 	def string_decoder(self, g_str):
-		g_str = str(g_str.data)
-		return g_str.split('/')[self.dup_num-1]
+		g_str = str(g_str.data).split('/')
+		if len(g_str) > (self.dup_num-1):
+			return g_str[self.dup_num-1]
+		else:
+			return -1
 
 	def call_simulate(self, data):
 		if data.data[0] == '-':
@@ -99,6 +102,9 @@ class simulator:
 
 		gene_dir = os.getenv("WALKYTO_PATH")
 		gene_id = self.string_decoder(data)
+		if gene_id == -1:
+			return
+
 		gene_f = open('%s/src/genes/%s' % (gene_dir, gene_id))
 		genome = pickle.load(gene_f)
 

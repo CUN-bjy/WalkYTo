@@ -10,7 +10,7 @@
   <arg name="dup" value="4"/>
   <arg name="pop" value="80"/>
   <arg name="max_iter" value="150"/>
-  <arg name="gen_op" value="-r"/>
+  <arg name="gen_op" value="-l"/>
   <arg name="ckp_name" value="neat-checkpoint-0"/>
 
 

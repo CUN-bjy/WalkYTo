@@ -111,7 +111,7 @@ class simulator:
 		net = neat.nn.FeedForwardNetwork.create(genome, config)
 
 		#-------------------------------------------------------------------------------------------------
-		now = rospy.Time.now();	duration = rospy.Duration(8)
+		now = rospy.Time.now();	duration = rospy.Duration(15)
 		then = now + duration
 		
 		self.gazebo_init()

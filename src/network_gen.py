@@ -132,16 +132,14 @@ def run(config_file, max_iter):
     visualize.plot_species(stats, view=True)
 
 
-def load_checkpoint(config_file, ckp_name, max_iter):
-	# Load configuration.
-	config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
-		                 neat.DefaultSpeciesSet, neat.DefaultStagnation,
-		                 config_file)
-
-	# Create the population, which is the top-level object for a NEAT run.
-	p = neat.Population(config)
-
+def load_checkpoint(ckp_name, max_iter):
 	p = neat.Checkpointer.restore_checkpoint(ckp_name)
+
+	p.add_reporter(neat.StdOutReporter(True))
+	stats = neat.StatisticsReporter()
+	p.add_reporter(stats)
+	p.add_reporter(neat.Checkpointer(1))
+
 	p.run(eval_genomes, max_iter)
 
 if __name__ == '__main__':
@@ -162,4 +160,4 @@ if __name__ == '__main__':
 	if argv[2] == '-r':
 		run(config_path, argv[1])
 	elif argv[2] == '-l':
-		load_checkpoint(config_path, argv[3],argv[1])
+		load_checkpoint(argv[3],argv[1])

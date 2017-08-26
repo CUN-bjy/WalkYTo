@@ -67,16 +67,16 @@ class simulator:
 
 	###############################################################################################################
 	def get_pose(self):
-		rospy.wait_for_service('gazebo/get_model_state')
+		rospy.wait_for_service('gazebo/get_link_state')
 		try:
 			# create a handle to the add_two_ints service
-			get_model_state = rospy.ServiceProxy('gazebo/get_model_state', GetModelState)
+			get_model_state = rospy.ServiceProxy('gazebo/get_link_state', GetLinkState)
 
 			model_name = '%s_%d' % (self.model_name, self.dup_num)
 			# formal style
-			resp = get_model_state.call(GetModelStateRequest(model_name, ''))
+			resp = get_model_state.call(GetLinkStateRequest('%s::CORE'%model_name, ''))
 
-			pos = resp.pose.position
+			pos = resp.link_state.pose.position
 			return pos
 
 		except rospy.ServiceException, e:

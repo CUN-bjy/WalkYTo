@@ -30,6 +30,21 @@ def gene_management(genomes):
 		gen_file = open("%s/src/genes/%d" % (local_dir,genome_id),'w')
 		pickle.dump(genome, gen_file)
 
+# def gazebo_clear():
+# 	rospy.wait_for_service('sim_run%d'%channel)
+# 	try:
+# 		Sim_Run = rospy.ServiceProxy('sim_run%d' % channel, SimRun, persistent=True)
+
+# 		resp = Sim_Run.call(SimRunRequest(True))
+
+# 		if resp.success:
+# 			return resp.distance
+# 		else:
+# 			return -1
+
+# 	except rospy.ServiceException, e:
+# 		print "Service call failed: %s"%e
+
 def gene_id_publisher(gene_string):
 	pub = rospy.Publisher('gene_pub', String, queue_size=10)
 	pub.publish(gene_string)
@@ -98,6 +113,7 @@ def eval_genomes(genomes, config):
 
 		u = u+1
 
+	# gazebo_clear()
 
 
 def run(config_file, max_iter):

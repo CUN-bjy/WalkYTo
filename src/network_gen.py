@@ -5,6 +5,7 @@ import neat, visualize
 
 from walkyto.srv import *
 from std_msgs.msg import String
+from std_srvs.srv import Empty
 
 
 local_dir = os.getenv("WALKYTO_PATH")
@@ -30,20 +31,15 @@ def gene_management(genomes):
 		gen_file = open("%s/src/genes/%d" % (local_dir,genome_id),'w')
 		pickle.dump(genome, gen_file)
 
-# def gazebo_clear():
-# 	rospy.wait_for_service('sim_run%d'%channel)
-# 	try:
-# 		Sim_Run = rospy.ServiceProxy('sim_run%d' % channel, SimRun, persistent=True)
+def gazebo_clear():
+	rospy.wait_for_service('gazebo/reset_simulation')
+	try:
+		rs_sim = rospy.ServiceProxy('gazebo/reset_simulation', Empty)
 
-# 		resp = Sim_Run.call(SimRunRequest(True))
+		resp = rs_sim.call()
 
-# 		if resp.success:
-# 			return resp.distance
-# 		else:
-# 			return -1
-
-# 	except rospy.ServiceException, e:
-# 		print "Service call failed: %s"%e
+	except rospy.ServiceException, e:
+		print "Service call failed: %s"%e
 
 def gene_id_publisher(gene_string):
 	pub = rospy.Publisher('gene_pub', String, queue_size=10)
@@ -113,7 +109,8 @@ def eval_genomes(genomes, config):
 
 		u = u+1
 
-	# gazebo_clear()
+	gazebo_clear()
+	print 'pass'
 
 
 def run(config_file, max_iter):
@@ -167,7 +164,7 @@ if __name__ == '__main__':
 	argv = rospy.myargv()
 	
 	rate1=rospy.Rate(2)
-	for i in range(30):
+	for i in range(20):
 		gene_id_publisher('-');rate1.sleep()
 
 	local_dir = os.path.dirname(__file__)

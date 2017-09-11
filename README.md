@@ -13,4 +13,4 @@ Undergraduate Researcher Program
 
 gazebo simulation system
 with bell_and_faraday launch file
-![Image](./system.jpg){: width="100px" height="20px"}
+![Image](./system.jpg=100x20)

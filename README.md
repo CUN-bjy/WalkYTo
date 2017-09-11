@@ -11,6 +11,6 @@ Undergraduate Researcher Program
 - "neat-python" for genetic network model -- python module
 - "tensorflow" for DQN implementation -- python module
 
-###gazebo simulation system
+### gazebo simulation system
 with bell_and_faraday launch file
 ![Image](./system.jpg)

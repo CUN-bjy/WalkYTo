@@ -33,6 +33,6 @@ if you want to run gazebo simulator, with the argment `GUI:=true`
 	* `simulator.py` : When receive the genes from generator, simulate the network. During the simulating, this process communicate with gazebo. 
 	* `/genes` : gene files generated from network generator.
 	* `neat-checkpoint-*` : save generation files(pickle)
-	*  other files are for supporting above files. Please focus on the first lines with 'import' code.
+	*  Other files are for supporting above files. Please focus on the every first lines with 'import' code.
 - `/srv` : has a service file for generator to communicate with simulators.
 - `/worlds` : has world files. It includes informations to describe physics and simulation env. configuration.

@@ -13,7 +13,7 @@ Undergraduate Researcher Program
 - "tensorflow" for DQN implementation -- python module
 
 
-### gazebo simulation system
+### Gazebo Simulation System
 ![Image](https://github.com/CUN-bjy/WalkYTo/blob/master/system.jpg?raw=true)
 *with bell_and_faraday launch file*
 

@@ -117,10 +117,11 @@ class simulator:
 		self.gazebo_init()
 		pos_init = self.get_pose()
 		#--------------------------------------------------------------------------------------------------
+		dur = rospy.Duration(0.05)
 		while(then > now):
 		 	joint_efforts = net.activate(self.joint_states)
-		 	self.efforts_caller(joint_efforts, time(0,500000000))#0.5sec
-
+		 	self.efforts_caller(joint_efforts, dur)#0.05sec
+		 	rospy.sleep(dur)
 		 	# print "input:", self.joint_states
 		 	# print "output:", joint_efforts
 		 	now = rospy.Time.now()

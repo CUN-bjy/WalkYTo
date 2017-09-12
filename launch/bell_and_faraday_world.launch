@@ -11,7 +11,7 @@
   <arg name="pop" value="80"/>
   <arg name="max_iter" value="150"/>
   <arg name="gen_op" value="-l"/>
-  <arg name="ckp_name" value="neat-checkpoint-6"/>
+  <arg name="ckp_name" value="neat-checkpoint-12"/>
 
 
   <node name="simulator1" pkg="walkyto" type="simulator.py" output="screen" args="$(arg model)_1 $(arg dup)"/>

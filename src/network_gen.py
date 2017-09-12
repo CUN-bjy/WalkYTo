@@ -109,8 +109,8 @@ def eval_genomes(genomes, config):
 
 		u = u+1
 
-	gazebo_clear()
-	print 'pass'
+	# gazebo_clear()
+	# print 'pass'
 
 
 def run(config_file, max_iter):

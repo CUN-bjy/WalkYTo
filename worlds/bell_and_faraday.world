@@ -1,9 +1,9 @@
 <sdf version='1.6'>
   <world name='default'>
-    <physics name='default_physics' default='0' type='bullet'>
+    <physics name='default_physics' default='0' type='ode'>
       <max_step_size>0.01</max_step_size>
       <real_time_update_rate>-1</real_time_update_rate>
-    <!--   <ode>
+      <ode>
         <solver>
           <type>quick</type>
           <iters>50</iters>
@@ -16,8 +16,8 @@
           <contact_max_correcting_vel>100</contact_max_correcting_vel>
           <contact_surface_layer>0.001</contact_surface_layer>
         </constraints>
-      </ode> -->
-      <bullet>
+      </ode>
+    <!--   <bullet>
         <solver>
           <type>sequential_impulse</type>
           <iters>50</iters>
@@ -30,7 +30,7 @@
           <split_impulse_penetration_threshold>-0.02</split_impulse_penetration_threshold>
           <contact_surface_layer>0.001</contact_surface_layer>
         </constraints>
-      </bullet>
+      </bullet> -->
     </physics>
     
     <model name='ground_plane'>

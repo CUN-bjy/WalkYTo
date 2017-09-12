@@ -10,3 +10,7 @@ Undergraduate Researcher Program
 - "gazebo_ros_pkgs" for graphic simulation -- ros package
 - "neat-python" for genetic network model -- python module
 - "tensorflow" for DQN implementation -- python module
+
+### gazebo simulation system
+with bell_and_faraday launch file
+![Image](./system.jpg)

@@ -13,9 +13,10 @@ Undergraduate Researcher Program
 - "tensorflow" for DQN implementation -- python module
 
 
-#### gazebo simulation system
-*with bell_and_faraday launch file*
+### gazebo simulation system
 ![Image](https://github.com/CUN-bjy/WalkYTo/blob/master/system.jpg?raw=true)
+*with bell_and_faraday launch file*
+
 
 
 #### Conmmend for launch
@@ -24,5 +25,4 @@ Undergraduate Researcher Program
 if you want to run gazebo simulator, with the argment `GUI:=true`
 <pre>roslaunch walkyto bell_and_faraday_world.launch GUI:=true</pre>
 
-<br>
 #### Code Abstract

@@ -8,6 +8,7 @@ from gazebo_msgs.srv import *
 from gazebo_msgs.msg import *
 from walkyto.srv import *
 from std_msgs.msg import String
+from std_srvs.srv import Empty
 
 from apply_joint_effort_client import *
 from spawn_model_client import *
@@ -15,7 +16,7 @@ from delete_model_client import *
 
 
 class simulator:
-	def gazebo_init(self):
+	def gazebo_init(self):		
 		local_dir = os.getenv("GAZEBO_MODEL_PATH")
 		sdf_file =  open('%s/%s/model.sdf'%(local_dir, self.model_name), 'r')
 		model_xml = sdf_file.read()
@@ -31,6 +32,19 @@ class simulator:
 
 	def gazebo_exit(self):
 		delete_model('%s_%d' % (self.model_name, self.dup_num))
+
+	def world_clear(self):
+		rospy.wait_for_service('gazebo/reset_world')
+		try:
+			rs_sim = rospy.ServiceProxy('gazebo/reset_world', Empty)
+
+			resp = rs_sim.call()
+
+			model_name = '%s_%d' % (self.model_name, self.dup_num)
+			print "%s -- reset!"%model_name
+
+		except rospy.ServiceException, e:
+			print "Service call failed: %s"%e
 	##############################################################################################################
 
 	def state_getter(self, data):
@@ -77,6 +91,7 @@ class simulator:
 			resp = get_model_state.call(GetLinkStateRequest('%s::CORE'%model_name, ''))
 
 			pos = resp.link_state.pose.position
+
 			return pos
 
 		except rospy.ServiceException, e:
@@ -111,25 +126,26 @@ class simulator:
 		net = neat.nn.FeedForwardNetwork.create(genome, config)
 
 		#-------------------------------------------------------------------------------------------------
-		now = rospy.Time.now();	duration = rospy.Duration(15)
-		then = now + duration
-		
-		self.gazebo_init()
+		now = rospy.Time.now();	duration = rospy.Duration(60)
+		then = now + duration		
+
+		#self.gazebo_init()
 		pos_init = self.get_pose()
 		#--------------------------------------------------------------------------------------------------
-		dur = rospy.Duration(0.05)
+		dur = rospy.Duration(0.1)		
 		while(then > now):
 		 	joint_efforts = net.activate(self.joint_states)
 		 	self.efforts_caller(joint_efforts, dur)#0.05sec
-		 	rospy.sleep(dur)
+		 	# rospy.sleep(dur)
 		 	# print "input:", self.joint_states
 		 	# print "output:", joint_efforts
 		 	now = rospy.Time.now()
-		#--------------------------------------------------------------------------------------------------
+		#--------------------------------------------------------------------------------------------------	
 		pos_end = self.get_pose()
-		self.gazebo_exit()
+		self.world_clear()
+		#self.gazebo_exit()
 
-		dist = (pos_init.x-pos_end.x)
+		dist = (pos_init.x - pos_end.x)
 
 		self.fitness = dist
 
@@ -146,9 +162,10 @@ class simulator:
 		self.model_name = model_name[0:-2]
 		self.dup_num = int(model_name[-1])
 		self.joint_states = None
-		self.fitness = None
+		self.fitness = None		
 
 		rospy.init_node('simulator%d' % self.dup_num)
+		self.gazebo_init()
 
 		rospy.Subscriber('gene_pub', String, self.call_simulate)
 		rospy.Subscriber('/gazebo/link_states', LinkStates, self.state_getter)

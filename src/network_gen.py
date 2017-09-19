@@ -67,7 +67,7 @@ def eval_genomes(genomes, config):
 		id_list.append(gene_id)
 		gene_list.append(gene)
 
-	dup_num = 4
+	dup_num = 8
 	population = len(id_list)
 	temp_list =list(id_list)
 

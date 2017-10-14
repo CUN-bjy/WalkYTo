@@ -14,8 +14,19 @@ from apply_joint_effort_client import *
 from spawn_model_client import *
 from delete_model_client import *
 
+class Twist :
+	def __init__(self, linear, angular):
+		self.linear = linear
+		self.angular = angular
+
+class Vector3 :
+	def __init__(self, x, y, z):
+		self.x = x
+		self.y = y
+		self.z = z
 
 class simulator:
+
 	def gazebo_init(self):		
 		local_dir = os.getenv("GAZEBO_MODEL_PATH")
 		sdf_file =  open('%s/%s/model.sdf'%(local_dir, self.model_name), 'r')
@@ -33,35 +44,41 @@ class simulator:
 	def gazebo_exit(self):
 		delete_model('%s_%d' % (self.model_name, self.dup_num))
 
-	def world_clear(self):
-		rospy.wait_for_service('gazebo/reset_world')
-		try:
-			rs_sim = rospy.ServiceProxy('gazebo/reset_world', Empty)
+	def set_world_state(self, state):
+		model_name = '%s_%d' % (self.model_name, self.dup_num)
 
-			resp = rs_sim.call()
+		for key in list(self.link_reference.keys()):
+			link_name = key
+			reference_name = self.link_reference[key]
+			joint_name = '%s::%s'%(model_name,link_name)
+			ref_joint_name = '%s::%s'%(model_name,reference_name)
 
-			model_name = '%s_%d' % (self.model_name, self.dup_num)
-			print "%s -- reset!"%model_name
+			if joint_name in state.name:
+				pose = state.pose[state.name.index(joint_name)]
+				twist = Twist(Vector3(0,0,0), Vector3(0,0,0))
+				lstate = LinkState(joint_name,pose,twist,ref_joint_name)
 
-		except rospy.ServiceException, e:
-			print "Service call failed: %s"%e
+				rospy.wait_for_service('gazebo/set_link_state')
+				try:
+					set_state = rospy.ServiceProxy('gazebo/set_link_state', SetLinkState)
+
+					resp = set_state.call(SetLinkStateRequest(lstate))
+
+
+				except rospy.ServiceException, e:
+					print "Service call failed: %s"%e
+
+		print "%s -- set state!"%model_name
 	##############################################################################################################
 
 	def state_getter(self, data):
-		if self.model_name == 'MS_Faraday_imu':
-			link_reference = {'ML-0':'CORE','ML-1':'L2',	'ML-2':'L3-1','ML-3':'L3-1',
-							'ML-4':'L4','MR-5':'CORE','MR-6':'R2','MR-7':'R3-1',
-							'MR-8':'R3-1','MR-9':'R4'}
-		else:
-			print 'there is not link_reference of %s' % self.model_name
-			sys.exit()
-
+		self.link_state = data
 		model_name = '%s_%d' % (self.model_name, self.dup_num)
 		vel_list = [0,0,0,0,0,0,0,0,0,0]
 
-		for key in list(link_reference.keys()):
+		for key in list(self.link_reference.keys()):
 			link_name = key
-			reference_name = link_reference[key]
+			reference_name = self.link_reference[key]
 			joint_name = '%s::%s'%(model_name,link_name)
 			ref_joint_name = '%s::%s'%(model_name,reference_name)
 
@@ -73,6 +90,7 @@ class simulator:
 				vel_list[int(key[3])] = vel
 
 		self.joint_states = vel_list
+		
 
 
 	def efforts_caller(self, joint_efforts, duration):
@@ -126,29 +144,46 @@ class simulator:
 		net = neat.nn.FeedForwardNetwork.create(genome, config)
 
 		#-------------------------------------------------------------------------------------------------
-		now = rospy.Time.now();	duration = rospy.Duration(60)
+		now = rospy.Time.now()
+
+		duration = rospy.Duration(180)
 		then = now + duration		
 
 		#self.gazebo_init()
 		pos_init = self.get_pose()
 		#--------------------------------------------------------------------------------------------------
-		dur = rospy.Duration(0.1)		
+		dur = rospy.Duration(0.3); gap = rospy.Duration(0)
 		while(then > now):
 		 	joint_efforts = net.activate(self.joint_states)
 		 	self.efforts_caller(joint_efforts, dur)#0.05sec
-		 	# rospy.sleep(dur)
+		 	rospy.sleep(dur)
 		 	# print "input:", self.joint_states
 		 	# print "output:", joint_efforts
 		 	now = rospy.Time.now()
+		 	
+			if gap == rospy.Duration(0):
+				if then-now > duration + rospy.Duration(5):
+					gap = then-now
+			elif gap > rospy.Duration(0):
+				now = now + gap - duration
+
+
+		 	#print self.dup_num, gap.to_sec(), then.to_sec(), now.to_sec()
+		 	
 		#--------------------------------------------------------------------------------------------------	
 		pos_end = self.get_pose()
-		self.world_clear()
+
+		# self.world_clear()
+		# if self.init_state != None:
+		# 	print len(self.init_state.name)
+		# 	self.set_world_state(self.init_state)
 		#self.gazebo_exit()
 
-		dist = (pos_init.x - pos_end.x)
+		dist = (pos_end.x - pos_init.x)
 
 		self.fitness = dist
-
+###############################################################################
+	
 	def fit_server(self, req):
 		if self.fitness == None:
 			return SimRunResponse(self.fitness, False)
@@ -163,15 +198,40 @@ class simulator:
 		self.dup_num = int(model_name[-1])
 		self.joint_states = None
 		self.fitness = None		
+		self.init_state=None
 
+
+		if self.model_name == 'MS_Faraday_imu':
+			self.link_reference = {'ML-0':'CORE','ML-1':'L2',	'ML-2':'L3-1','ML-3':'L3-1',
+							'ML-4':'L4','MR-5':'CORE','MR-6':'R2','MR-7':'R3-1',
+							'MR-8':'R3-1','MR-9':'R4'}
+		else:
+			print 'there is not link_reference of %s' % self.model_name
+			sys.exit()
+
+		# self.gazebo_exit()
 		rospy.init_node('simulator%d' % self.dup_num)
+		
+
+		
+		rospy.Subscriber('/gazebo/link_states', LinkStates, self.state_getter)
+
+		# spin() keeps Python from exiting until node is shutdown
+		self.gazebo_exit()
 		self.gazebo_init()
 
 		rospy.Subscriber('gene_pub', String, self.call_simulate)
-		rospy.Subscriber('/gazebo/link_states', LinkStates, self.state_getter)
-
 		s=rospy.Service('sim_run%d' % self.dup_num, SimRun, self.fit_server)
-		# spin() keeps Python from exiting until node is shutdown
+
+		rate1=rospy.Rate(2)
+		for i in range(20):
+			rate1.sleep()
+		self.init_state = self.link_state
+		
+		while(len(self.init_state.name) < self.dup_num*20):
+			self.init_state = self.link_state
+
+		
 		rospy.spin()
 
 

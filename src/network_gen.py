@@ -2,12 +2,35 @@
 import os, pickle
 import rospy
 import neat, visualize
+import time
 
 from walkyto.srv import *
 from std_msgs.msg import String
 from std_srvs.srv import Empty
 
 
+def gazebo_clear():
+	rospy.wait_for_service('gazebo/reset_simulation')
+	try:
+		rs_sim = rospy.ServiceProxy('gazebo/reset_simulation', Empty)
+
+		resp = rs_sim.call()
+
+	except rospy.ServiceException, e:
+		print "Service call failed: %s"%e
+
+def world_clear():
+	rospy.wait_for_service('gazebo/reset_world')
+	try:
+		rs_sim = rospy.ServiceProxy('gazebo/reset_world', Empty)
+
+		resp = rs_sim.call()
+
+		print("world reset!")
+
+	except rospy.ServiceException, e:
+		print "Service call failed: %s"%e
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 local_dir = os.getenv("WALKYTO_PATH")
 if not os.path.exists("%s/src/genes"%local_dir):
 		os.makedirs("%s/src/genes"%local_dir, 0766)
@@ -30,16 +53,6 @@ def gene_management(genomes):
 	for genome_id, genome in genomes:
 		gen_file = open("%s/src/genes/%d" % (local_dir,genome_id),'w')
 		pickle.dump(genome, gen_file)
-
-def gazebo_clear():
-	rospy.wait_for_service('gazebo/reset_simulation')
-	try:
-		rs_sim = rospy.ServiceProxy('gazebo/reset_simulation', Empty)
-
-		resp = rs_sim.call()
-
-	except rospy.ServiceException, e:
-		print "Service call failed: %s"%e
 
 def gene_id_publisher(gene_string):
 	pub = rospy.Publisher('gene_pub', String, queue_size=10)
@@ -72,7 +85,6 @@ def eval_genomes(genomes, config):
 	temp_list =list(id_list)
 
 	rate1=rospy.Rate(3)# 10hz
-	rate2=rospy.Rate(5)# 5hz
 	u = 0
 	while(temp_list != []):
 		gene_string = str(temp_list.pop())
@@ -86,7 +98,7 @@ def eval_genomes(genomes, config):
 		print("-----------simulation(%d/%d)--------------"%(population-len(temp_list), population))
 		print("gene_id:", gene_string)
 		gene_id_publisher(gene_string)
-		rate1.sleep()
+		# rate1.sleep()
 		
 
 		fcnt = 0; fit_list=[]
@@ -99,12 +111,13 @@ def eval_genomes(genomes, config):
 				a_gen.fitness = fitness
 				fcnt = fcnt + 1
 			else:
-				rate2.sleep()
+				time.sleep(0.2)
 
 			if len(gene_list) == 0:
 				break
 
-		
+		# world_clear()
+		gazebo_clear()
 		print("fit:", fit_list)
 
 		u = u+1
@@ -112,7 +125,7 @@ def eval_genomes(genomes, config):
 	# gazebo_clear()
 	# print 'pass'
 
-
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 def run(config_file, max_iter):
     # Load configuration.
     config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,

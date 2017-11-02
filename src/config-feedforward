@@ -3,7 +3,7 @@
 [NEAT]
 fitness_criterion     = max
 fitness_threshold     = 20
-pop_size              = 40
+pop_size              = 80
 reset_on_extinction   = False
 
 [DefaultGenome]
@@ -31,8 +31,8 @@ compatibility_disjoint_coefficient = 1.0
 compatibility_weight_coefficient   = 0.5
 
 # connection add/remove rates
-conn_add_prob           = 0.5
-conn_delete_prob        = 0.5
+conn_add_prob           = 0.4
+conn_delete_prob        = 0.2
 
 # connection enable options
 enabled_default         = True
@@ -72,7 +72,7 @@ weight_replace_rate     = 0.1
 compatibility_threshold = 4.5
 
 [DefaultStagnation]
-species_fitness_func = max
+species_fitness_func = mean
 max_stagnation       = 20
 species_elitism      = 2
 

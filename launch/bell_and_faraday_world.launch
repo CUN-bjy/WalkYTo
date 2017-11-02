@@ -8,7 +8,6 @@
 
   <arg name="model" value="MS_Faraday_imu"/>
   <arg name="dup" value="8"/>
-  <arg name="pop" value="100"/>
   <arg name="max_iter" value="150"/>
   <arg name="gen_op" value="-r"/>
   <arg name="ckp_name" value="neat-checkpoint-104"/>

@@ -34,7 +34,7 @@ class simulator:
 		model_name = '%s_%d' % (self.model_name, self.dup_num)
 		robot_namespace = model_name
 
-		pos = position(0, (self.dup_num-1)*14 - (self.total_dup-1)*7, 0)
+		pos = position(0, (self.dup_num-1)*18 - (self.total_dup-1)*9, 0)
 		orient = orientation(0, 0, 0, 0)
 		initial_pose = pose(pos, orient)
 		reference_frame=''

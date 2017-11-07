@@ -168,7 +168,7 @@ class simulator:
 				now = now + gap - duration
 
 
-		 	#print self.dup_num, gap.to_sec(), then.to_sec(), now.to_sec()
+		 	# print self.dup_num, gap.to_sec(), then.to_sec(), now.to_sec()
 		 	
 		#--------------------------------------------------------------------------------------------------	
 		pos_end = self.get_pose()
@@ -209,7 +209,7 @@ class simulator:
 			print 'there is not link_reference of %s' % self.model_name
 			sys.exit()
 
-		# self.gazebo_exit()
+		self.gazebo_exit()
 		rospy.init_node('simulator%d' % self.dup_num)
 		
 
@@ -217,7 +217,7 @@ class simulator:
 		rospy.Subscriber('/gazebo/link_states', LinkStates, self.state_getter)
 
 		# spin() keeps Python from exiting until node is shutdown
-		self.gazebo_exit()
+		# self.gazebo_exit()
 		self.gazebo_init()
 
 		rospy.Subscriber('gene_pub', String, self.call_simulate)

@@ -172,9 +172,8 @@ if __name__ == '__main__':
 	rospy.init_node('network_gen')
 	argv = rospy.myargv()
 	
-	rate1=rospy.Rate(2)
 	for i in range(20):
-		gene_id_publisher('-');rate1.sleep()
+		gene_id_publisher('-');time.sleep(0.2)
 
 	local_dir = os.path.dirname(__file__)
 	config_path = os.path.join(local_dir, 'config-feedforward')

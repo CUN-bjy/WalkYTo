@@ -2,7 +2,7 @@
   <world name='default'>
     <physics name='default_physics' default='0' type='ode'>
       <max_step_size>0.05</max_step_size>
-      <real_time_update_rate>-1</real_time_update_rate>
+      <real_time_update_rate>-200</real_time_update_rate>
       <ode>
         <solver>
           <type>quick</type>

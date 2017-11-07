@@ -139,10 +139,10 @@ def run(config_file, max_iter):
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
-    p.add_reporter(neat.Checkpointer(generation_interval=5))
+    p.add_reporter(neat.Checkpointer(generation_interval=5,time_interval_seconds=None))
 
     # Run for up to 300 generations.
-    winner = p.run(eval_genomes, max_iter)
+    winner = p.run(eval_genomes, n=int(max_iter))
 
 
     node_names = {-1:'ML-0(I)', -2:'ML-1(I)', -3:'ML-2(I)', -4:'ML-3(I)',-5:'ML-4(I)',

@@ -31,15 +31,12 @@ def world_clear():
 	except rospy.ServiceException, e:
 		print "Service call failed: %s"%e
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-local_dir = os.getenv("WALKYTO_PATH")
-if not os.path.exists("%s/src/genes"%local_dir):
-		os.makedirs("%s/src/genes"%local_dir, 0766)
 
 def gene_management(genomes):
-	local_dir = os.getenv("WALKYTO_PATH")
+	global local_dir
 
 	genome_list = []
-	genes_list = os.listdir("%s/src/genes"%local_dir)
+	genes_list = os.listdir("%s/genes"%local_dir)
 	for genome_id, genome in genomes:
 		genome_list.append(str(genome.key))
 
@@ -48,10 +45,10 @@ def gene_management(genomes):
 	rm_list = [x for x in genes_list if x not in s2]
 
 	for rm_file in rm_list:
-		os.remove("%s/src/genes/%s" % (local_dir,rm_file))
+		os.remove("%s/genes/%s" % (local_dir,rm_file))
 
 	for genome_id, genome in genomes:
-		gen_file = open("%s/src/genes/%d" % (local_dir,genome_id),'w')
+		gen_file = open("%s/genes/%d" % (local_dir,genome_id),'w')
 		pickle.dump(genome, gen_file)
 
 def gene_id_publisher(gene_string):
@@ -72,6 +69,7 @@ def fit_caller(channel):
 
 	except rospy.ServiceException, e:
 		print "Service call failed: %s"%e
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 def eval_genomes(genomes, config):
 	gene_management(genomes)
@@ -84,7 +82,7 @@ def eval_genomes(genomes, config):
 	population = len(id_list)
 	temp_list =list(id_list)
 
-	rate1=rospy.Rate(3)# 10hz
+
 	u = 0
 	while(temp_list != []):
 		gene_string = str(temp_list.pop())
@@ -122,45 +120,53 @@ def eval_genomes(genomes, config):
 
 		u = u+1
 
+
+	global local_dir, stats
+	stat_file = open("%s/stats" % (local_dir),'w')
+	pickle.dump(stats, stat_file)
 	# gazebo_clear()
 	# print 'pass'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 def run(config_file, max_iter):
-    # Load configuration.
-    config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
-                         neat.DefaultSpeciesSet, neat.DefaultStagnation,
-                         config_file)
+	global stats
+    # Load configuration
+	config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
+						neat.DefaultSpeciesSet, neat.DefaultStagnation,
+						config_file)
 
-    # Create the population, which is the top-level object for a NEAT run.
-    p = neat.Population(config)
+	# Create the population, which is the top-level object for a NEAT run.
+	p = neat.Population(config)
 
-    # Add a stdout reporter to show progress in the terminal.
-    p.add_reporter(neat.StdOutReporter(True))
-    stats = neat.StatisticsReporter()
-    p.add_reporter(stats)
-    p.add_reporter(neat.Checkpointer(generation_interval=5,time_interval_seconds=None))
+	# Add a stdout reporter to show progress in the terminal.
+	p.add_reporter(neat.StdOutReporter(True))
 
-    # Run for up to 300 generations.
-    winner = p.run(eval_genomes, n=int(max_iter))
+	stats = neat.StatisticsReporter()
+	p.add_reporter(stats)
+	p.add_reporter(neat.Checkpointer(generation_interval=5,time_interval_seconds=None))
+
+	# Run for up to 300 generations.
+	winner = p.run(eval_genomes, n=int(max_iter))
 
 
-    node_names = {-1:'ML-0(I)', -2:'ML-1(I)', -3:'ML-2(I)', -4:'ML-3(I)',-5:'ML-4(I)',
-    			-6:'MR-5(I)',-7:'MR-6(I)',-8:'MR-7(I)',-9:'MR-8(I)',-10:'MR-9(I)',
+	node_names = {-1:'ML-0(I)', -2:'ML-1(I)', -3:'ML-2(I)', -4:'ML-3(I)',-5:'ML-4(I)',
+				-6:'MR-5(I)',-7:'MR-6(I)',-8:'MR-7(I)',-9:'MR-8(I)',-10:'MR-9(I)',
 				0:'ML-0(O)', 1:'ML-1(O)', 2:'ML-2(O)', 3:'ML-3(O)',4:'ML-4(O)',5:'MR-5(O)',
 				6:'MR-6(O)',7:'MR-7(O)', 8:'MR-8(O)',9:'MR-9(O)'}
-    visualize.draw_net(config, winner, view=True, node_names=node_names)
-    visualize.plot_stats(stats, ylog=False, view=True)
-    visualize.plot_species(stats, view=True)
+	visualize.draw_net(config, winner, view=True, node_names=node_names)
+	visualize.plot_stats(stats, ylog=False, view=True)
+	visualize.plot_species(stats, view=True)
 
 
 def load_checkpoint(ckp_name, max_iter):
+	global stats
 	p = neat.Checkpointer.restore_checkpoint(ckp_name)
-
 	p.add_reporter(neat.StdOutReporter(True))
+
 	stats = neat.StatisticsReporter()
 	p.add_reporter(stats)
-	p.add_reporter(neat.Checkpointer(1))
+	p.add_reporter(neat.Checkpointer(generation_interval=5,time_interval_seconds=None))
+
 
 	p.run(eval_genomes, max_iter)
 
@@ -178,6 +184,10 @@ if __name__ == '__main__':
 	local_dir = os.path.dirname(__file__)
 	config_path = os.path.join(local_dir, 'config-feedforward')
 	
+
+	if not os.path.exists("%s/genes"%local_dir):
+		os.makedirs("%s/genes"%local_dir, 0766)
+
 	if argv[2] == '-r':
 		run(config_path, argv[1])
 	elif argv[2] == '-l':

@@ -198,7 +198,7 @@ class simulator:
 		self.dup_num = int(model_name[-1])
 		self.joint_states = None
 		self.fitness = None		
-		self.init_state=None
+		# self.init_state = None
 
 
 		if self.model_name == 'MS_Faraday_imu':
@@ -223,13 +223,13 @@ class simulator:
 		rospy.Subscriber('gene_pub', String, self.call_simulate)
 		s=rospy.Service('sim_run%d' % self.dup_num, SimRun, self.fit_server)
 
-		rate1=rospy.Rate(2)
-		for i in range(20):
-			rate1.sleep()
-		self.init_state = self.link_state
+		# rate1=rospy.Rate(2)
+		# for i in range(20):
+		# 	rate1.sleep()
+		# self.init_state = self.link_state
 		
-		while(len(self.init_state.name) < self.dup_num*20):
-			self.init_state = self.link_state
+		# while(len(self.init_state.name) < self.dup_num*20):
+		# 	self.init_state = self.link_state
 
 		
 		rospy.spin()

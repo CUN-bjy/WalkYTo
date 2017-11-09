@@ -80,10 +80,9 @@ def eval_genomes(genomes, config):
 
 	dup_num = 8
 	population = len(id_list)
-	temp_list =list(id_list)
+	temp_list = list(id_list)
 
 
-	u = 0
 	while(temp_list != []):
 		gene_string = str(temp_list.pop())
 
@@ -96,7 +95,6 @@ def eval_genomes(genomes, config):
 		print("-----------simulation(%d/%d)--------------"%(population-len(temp_list), population))
 		print("gene_id:", gene_string)
 		gene_id_publisher(gene_string)
-		# rate1.sleep()
 		
 
 		fcnt = 0; fit_list=[]
@@ -118,7 +116,6 @@ def eval_genomes(genomes, config):
 		gazebo_clear()
 		print("fit:", fit_list)
 
-		u = u+1
 
 
 	global local_dir, stats
@@ -129,7 +126,6 @@ def eval_genomes(genomes, config):
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 def run(config_file, max_iter):
-	global stats
     # Load configuration
 	config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
 						neat.DefaultSpeciesSet, neat.DefaultStagnation,

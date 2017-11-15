@@ -142,7 +142,7 @@ class simulator:
 		genome = pickle.load(gene_f)
 
 		net = neat.nn.FeedForwardNetwork.create(genome, config)
-
+		#nn.recurrent.RecurrentNetwork ************** param3
 		#-------------------------------------------------------------------------------------------------
 		now = rospy.Time.now()
 
@@ -168,7 +168,7 @@ class simulator:
 				now = now + gap - duration
 
 
-		 	# print self.dup_num, gap.to_sec(), then.to_sec(), now.to_sec()
+		 	#print self.dup_num, gap.to_sec(), then.to_sec(), now.to_sec()
 		 	
 		#--------------------------------------------------------------------------------------------------	
 		pos_end = self.get_pose()
@@ -198,7 +198,7 @@ class simulator:
 		self.dup_num = int(model_name[-1])
 		self.joint_states = None
 		self.fitness = None		
-		# self.init_state = None
+		self.init_state=None
 
 
 		if self.model_name == 'MS_Faraday_imu':
@@ -209,7 +209,7 @@ class simulator:
 			print 'there is not link_reference of %s' % self.model_name
 			sys.exit()
 
-		self.gazebo_exit()
+		# self.gazebo_exit()
 		rospy.init_node('simulator%d' % self.dup_num)
 		
 
@@ -217,19 +217,19 @@ class simulator:
 		rospy.Subscriber('/gazebo/link_states', LinkStates, self.state_getter)
 
 		# spin() keeps Python from exiting until node is shutdown
-		# self.gazebo_exit()
+		self.gazebo_exit()
 		self.gazebo_init()
 
 		rospy.Subscriber('gene_pub', String, self.call_simulate)
 		s=rospy.Service('sim_run%d' % self.dup_num, SimRun, self.fit_server)
 
-		# rate1=rospy.Rate(2)
-		# for i in range(20):
-		# 	rate1.sleep()
-		# self.init_state = self.link_state
+		rate1=rospy.Rate(2)
+		for i in range(20):
+			rate1.sleep()
+		self.init_state = self.link_state
 		
-		# while(len(self.init_state.name) < self.dup_num*20):
-		# 	self.init_state = self.link_state
+		while(len(self.init_state.name) < self.dup_num*20):
+			self.init_state = self.link_state
 
 		
 		rospy.spin()
@@ -241,5 +241,3 @@ if __name__ == '__main__':
 	dup_num = argv[2]
 
 	sim = simulator('%s'%model_name, dup_num)
-
-

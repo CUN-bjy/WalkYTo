@@ -31,6 +31,12 @@ def world_clear():
 	except rospy.ServiceException, e:
 		print "Service call failed: %s"%e
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+def gene_clear():
+	global local_dir
+
+	genes_list = os.listdir("%s/genes",local_dir)
+	for rm_file in genes_list:
+		os.remove("%s/genes/%s" % (local_dir,rm_file))
 
 def gene_management(genomes):
 	global local_dir
@@ -117,15 +123,16 @@ def eval_genomes(genomes, config):
 		print("fit:", fit_list)
 
 
-
-	global local_dir, stats
-	stat_file = open("%s/stats" % (local_dir),'w')
-	pickle.dump(stats, stat_file)
+	global local_dir, stats, p
+	if p.generation % 10 ==9:
+		stat_file = open("%s/stats%d" % (local_dir, p.generation),'w')
+		pickle.dump(stats, stat_file)
 	# gazebo_clear()
 	# print 'pass'
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 def run(config_file, max_iter):
+	global stats, p
     # Load configuration
 	config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
 						neat.DefaultSpeciesSet, neat.DefaultStagnation,
@@ -139,7 +146,7 @@ def run(config_file, max_iter):
 
 	stats = neat.StatisticsReporter()
 	p.add_reporter(stats)
-	p.add_reporter(neat.Checkpointer(generation_interval=5,time_interval_seconds=None))
+	p.add_reporter(neat.Checkpointer(generation_interval=10,time_interval_seconds=None))
 
 	# Run for up to 300 generations.
 	winner = p.run(eval_genomes, n=int(max_iter))
@@ -155,13 +162,13 @@ def run(config_file, max_iter):
 
 
 def load_checkpoint(ckp_name, max_iter):
-	global stats
+	global stats,p
 	p = neat.Checkpointer.restore_checkpoint(ckp_name)
 	p.add_reporter(neat.StdOutReporter(True))
 
 	stats = neat.StatisticsReporter()
 	p.add_reporter(stats)
-	p.add_reporter(neat.Checkpointer(generation_interval=5,time_interval_seconds=None))
+	p.add_reporter(neat.Checkpointer(generation_interval=10,time_interval_seconds=None))
 
 
 	p.run(eval_genomes, max_iter)
@@ -175,7 +182,7 @@ if __name__ == '__main__':
 	argv = rospy.myargv()
 	
 	for i in range(20):
-		gene_id_publisher('-');time.sleep(0.2)
+		gene_id_publisher('-');time.sleep(0.25)
 
 	local_dir = os.path.dirname(__file__)
 	config_path = os.path.join(local_dir, 'config-feedforward')
@@ -183,7 +190,10 @@ if __name__ == '__main__':
 
 	if not os.path.exists("%s/genes"%local_dir):
 		os.makedirs("%s/genes"%local_dir, 0766)
+	else:
+		gene_clear()
 
+		
 	if argv[2] == '-r':
 		run(config_path, argv[1])
 	elif argv[2] == '-l':

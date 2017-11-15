@@ -1,6 +1,6 @@
 import neat, visualize
-import pickle,sys, os
-from simul import *
+import pickle,sys, os, time, signal
+
 
 def manual():
 	print("\n"),
@@ -53,6 +53,35 @@ def network_visualizer():
 			visualize.draw_net(config, most_gene[i], view=view, node_names=node_names,filename="%d"%i)
 
 			print ("%d:"%i, most_gene[i].fitness)
+#===================================================================================================
+def gene_id_publisher(gene_string):
+	pub = rospy.Publisher('gene_pub', String, queue_size=10)
+	pub.publish(gene_string)
+
+def fit_caller(channel):
+	rospy.wait_for_service('sim_run%d'%channel)
+	try:
+		Sim_Run = rospy.ServiceProxy('sim_run%d' % channel, SimRun, persistent=True)
+
+		resp = Sim_Run.call(SimRunRequest(True))
+
+		if resp.success:
+			return resp.distance
+		else:
+			return -1
+
+	except rospy.ServiceException, e:
+		print "Service call failed: %s"%e
+
+def gazebo_clear():
+	rospy.wait_for_service('gazebo/reset_simulation')
+	try:
+		rs_sim = rospy.ServiceProxy('gazebo/reset_simulation', Empty)
+
+		resp = rs_sim.call()
+
+	except rospy.ServiceException, e:
+		print "Service call failed: %s"%e
 
 
 def motion_tester():
@@ -66,23 +95,60 @@ def motion_tester():
 	else:
 		while True:
 			most_gene, config = extract_gene()
-			gene_num = input('which genome?\n\
+			gene_num = input("which genome?\n\
 								0: gene_0\n\
 								1: gene_1\n\
 								2: gene_2\n\
 								3: gene_3\n\
 								4: gene_4\n\
-								5: all_gene\n:')
+								5: all_gene\n\
+								6: quit\n:")
+
 			if gene_num != 5:
 				for i in range(5):
 					gen_file = open("%s/src/genes/%d" % (getenv(WALKYTO_PATH),i),'w')
 					pickle.dump(most_gene[i], gen_file)
 
-				print("this function does not work now. not completed!")
-				return
-			else:
+				gene_string = str(most_gene.pop())
+				while len(most_gene) > 0:
+					gene_string = gene_string + '/' + str(most_gene.pop())
+				
+
+				fcnt = 0; fit_list=[]
+				while fcnt < 5:
+					gene_id_publisher('-%d'%fcnt)
+					fitness = fit_caller(fcnt+1)
+					if fitness != -1:
+						fit_list.append(fitness)
+						fcnt = fcnt + 1
+					else:
+						time.sleep(0.2)
+
+				gazebo_clear()
+				print("fit:", fit_list)
+
+			elif gene_num==0 or gene_num==1 or gene_num==2 or gene_num==3 or gene_num==4:
 				gen_file = open("%s/src/genes/%d" % (getenv(WALKYTO_PATH),gene_num),'w')
 				pickle.dump(most_gene[gene_num], gen_file)
+
+				gene_string = str(most_gene[gene_num])
+
+				fcnt = 0; fit_list=[]
+				while fcnt == 0:
+					gene_id_publisher('-%d'%fcnt)
+					fitness = fit_caller(fcnt+1)
+					if fitness != -1:
+						fit_list.append(fitness)
+						fcnt = fcnt + 1
+					else:
+						time.sleep(0.2)
+
+				gazebo_clear()
+				print("fit:", fit_list)
+
+			else:
+				os.kill(gazebo_pid, sgnal.SIGINT); os.kill(simulator_pid, signal.SIGINT)
+				return
 
 
 #==========================================================================================

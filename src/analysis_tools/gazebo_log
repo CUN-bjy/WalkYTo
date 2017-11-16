@@ -1,0 +1,41 @@
+[31m[ERROR] [1510735323.685862922, 53.592000000]: DeleteModel: model [MS_Faraday_imu_1] does not exist[0m
+[31m[ERROR] [1510735324.691407756, 53.692000000]: DeleteModel: model [MS_Faraday_imu_3] does not exist[0m
+[31m[ERROR] [1510735324.695578738, 53.692000000]: DeleteModel: model [MS_Faraday_imu_2] does not exist[0m
+[31m[ERROR] [1510735324.700363453, 53.692000000]: DeleteModel: model [MS_Faraday_imu_4] does not exist[0m
+[31m[ERROR] [1510735324.703922627, 53.692000000]: DeleteModel: model [MS_Faraday_imu_5] does not exist[0m
+[31m[gazebo-1] escalating to SIGTERM[0m
+... logging to /home/cun/.ros/log/d427c758-c9e0-11e7-af43-88532ec08a55/roslaunch-cun-15058.log
+Checking log directory for disk usage. This may take awhile.
+Press Ctrl-C to interrupt
+Done checking log file disk usage. Usage is <1GB.
+]2;/home/cun/catkin_ws/src/walkyto/launch/gazebo_empty.launch
+[1mstarted roslaunch server http://localhost:45279/[0m
+
+SUMMARY
+========
+
+PARAMETERS
+ * /rosdistro: kinetic
+ * /rosversion: 1.12.6
+ * /use_sim_time: True
+
+NODES
+  /
+    gazebo (gazebo_ros/gzserver)
+    gazebo_gui (gazebo_ros/gzclient)
+
+[1mROS_MASTER_URI=http://localhost:11311[0m
+]2;/home/cun/catkin_ws/src/walkyto/launch/gazebo_empty.launch http://localhost:11311
+core service [/rosout] found
+[1mprocess[gazebo-1]: started with pid [15117][0m
+[1mprocess[gazebo_gui-2]: started with pid [15124][0m
+[gazebo_gui-2] killing on exit
+[gazebo-1] killing on exit
+shutting down processing monitor...
+... shutting down processing monitor complete
+[1mdone[0m
+: started with pid [14777][0m
+all processes on machine have died, roslaunch will exit
+shutting down processing monitor...
+... shutting down processing monitor complete
+[1mdone[0m

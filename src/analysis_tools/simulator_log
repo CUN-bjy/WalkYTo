@@ -1,0 +1,120 @@
+DeleteModel: model does not exist
+SpawnModel: Successfully spawned model
+DeleteModel: model does not exist
+SpawnModel: Successfully spawned model
+DeleteModel: model does not exist
+SpawnModel: Successfully spawned model
+DeleteModel: model does not exist
+SpawnModel: Successfully spawned model
+DeleteModel: model does not exist
+SpawnModel: Successfully spawned model
+... logging to /home/cun/.ros/log/d427c758-c9e0-11e7-af43-88532ec08a55/roslaunch-cun-15059.log
+Checking log directory for disk usage. This may take awhile.
+Press Ctrl-C to interrupt
+Done checking log file disk usage. Usage is <1GB.
+]2;/home/cun/catkin_ws/src/walkyto/launch/motion_test.launch
+[1mstarted roslaunch server http://localhost:46702/[0m
+
+SUMMARY
+========
+
+PARAMETERS
+ * /rosdistro: kinetic
+ * /rosversion: 1.12.6
+
+NODES
+  /
+    simulator1 (walkyto/simulator.py)
+    simulator2 (walkyto/simulator.py)
+    simulator3 (walkyto/simulator.py)
+    simulator4 (walkyto/simulator.py)
+    simulator5 (walkyto/simulator.py)
+
+[1mROS_MASTER_URI=http://localhost:11311[0m
+]2;/home/cun/catkin_ws/src/walkyto/launch/motion_test.launch http://localhost:11311
+core service [/rosout] found
+[1mprocess[simulator1-1]: started with pid [15307][0m
+[1mprocess[simulator2-2]: started with pid [15308][0m
+[1mprocess[simulator3-3]: started with pid [15309][0m
+[1mprocess[simulator4-4]: started with pid [15312][0m
+[1mprocess[simulator5-5]: started with pid [15315][0m
+[simulator4-4] killing on exit
+[simulator5-5] killing on exit
+[simulator3-3] killing on exit
+[simulator2-2] killing on exit
+[simulator1-1] killing on exit
+shutting down processing monitor...
+... shutting down processing monitor complete
+[1mdone[0m
+elete_model('%s_%d' % (self.model_name, self.dup_num))
+  File "/home/cun/catkin_ws/src/walkyto/src/delete_model_client.py", line 8, in delete_model
+    rospy.wait_for_service('gazebo/delete_model')
+  File "/opt/ros/kinetic/lib/python2.7/dist-packages/rospy/impl/tcpros_service.py", line 159, in wait_for_service
+    raise ROSInterruptException("rospy shutdown")
+rospy.exceptions.ROSInterruptException: rospy shutdown
+        raise ROSInterruptException("rospy shutdown")
+raise ROSInterruptException("rospy shutdown")
+rospy.exceptionsrospy.exceptions..ROSInterruptExceptionROSInterruptException: : rospy shutdownrospy shutdown
+
+Traceback (most recent call last):
+  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 244, in <module>
+    sim = simulator('%s'%model_name, dup_num)
+  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 221, in __init__
+    self.gazebo_exit()
+  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 45, in gazebo_exit
+    delete_model('%s_%d' % (self.model_name, self.dup_num))
+  File "/home/cun/catkin_ws/src/walkyto/src/delete_model_client.py", line 8, in delete_model
+    rospy.wait_for_service('gazebo/delete_model')
+  File "/opt/ros/kinetic/lib/python2.7/dist-packages/rospy/impl/tcpros_service.py", line 159, in wait_for_service
+Traceback (most recent call last):
+  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 244, in <module>
+    raise ROSInterruptException("rospy shutdown")
+rospy.exceptions.ROSInterruptException:     rospy shutdownsim = simulator('%s'%model_name, dup_num)
+
+  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 221, in __init__
+    self.gazebo_exit()
+  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 45, in gazebo_exit
+    delete_model('%s_%d' % (self.model_name, self.dup_num))
+  File "/home/cun/catkin_ws/src/walkyto/src/delete_model_client.py", line 8, in delete_model
+    rospy.wait_for_service('gazebo/delete_model')
+  File "/opt/ros/kinetic/lib/python2.7/dist-packages/rospy/impl/tcpros_service.py", line 159, in wait_for_service
+    raise ROSInterruptException("rospy shutdown")
+rospy.exceptions.ROSInterruptException: rospy shutdown
+... logging to /home/cun/.ros/log/c931a81e-c9e0-11e7-af43-88532ec08a55/roslaunch-cun-14713.log
+Checking log directory for disk usage. This may take awhile.
+Press Ctrl-C to interrupt
+Done checking log file disk usage. Usage is <1GB.
+]2;/home/cun/catkin_ws/src/walkyto/launch/motion_test.launch
+[1mstarted roslaunch server http://localhost:34091/[0m
+
+SUMMARY
+========
+
+PARAMETERS
+ * /rosdistro: kinetic
+ * /rosversion: 1.12.6
+
+NODES
+  /
+    simulator1 (walkyto/simulator.py)
+    simulator2 (walkyto/simulator.py)
+    simulator3 (walkyto/simulator.py)
+    simulator4 (walkyto/simulator.py)
+    simulator5 (walkyto/simulator.py)
+
+[1mROS_MASTER_URI=http://localhost:11311[0m
+]2;/home/cun/catkin_ws/src/walkyto/launch/motion_test.launch http://localhost:11311
+core service [/rosout] found
+[1mprocess[simulator1-1]: started with pid [14829][0m
+[1mprocess[simulator2-2]: started with pid [14830][0m
+[1mprocess[simulator3-3]: started with pid [14831][0m
+[1mprocess[simulator4-4]: started with pid [14832][0m
+[1mprocess[simulator5-5]: started with pid [14833][0m
+[simulator5-5] killing on exit
+[simulator4-4] killing on exit
+[simulator3-3] killing on exit
+[simulator2-2] killing on exit
+[simulator1-1] killing on exit
+shutting down processing monitor...
+... shutting down processing monitor complete
+[1mdone[0m

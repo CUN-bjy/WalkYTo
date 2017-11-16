@@ -34,7 +34,7 @@ def world_clear():
 def gene_clear():
 	global local_dir
 
-	genes_list = os.listdir("%s/genes",local_dir)
+	genes_list = os.listdir("%s/genes"%local_dir)
 	for rm_file in genes_list:
 		os.remove("%s/genes/%s" % (local_dir,rm_file))
 

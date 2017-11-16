@@ -194,8 +194,9 @@ class simulator:
 
 	def __init__(self, model_name, dup_t):
 		self.total_dup = int(dup_t)
-		self.model_name = model_name[0:-2]
-		self.dup_num = int(model_name[-1])
+		
+		self.model_name = model_name[:-len(model_name.split('_')[-1])-1]
+		self.dup_num = int(model_name.split('_')[-1])
 		self.joint_states = None
 		self.fitness = None		
 		self.init_state=None

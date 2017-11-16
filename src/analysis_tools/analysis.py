@@ -1,5 +1,9 @@
 import neat, visualize
 import pickle,sys, os, time, signal
+import rospy
+
+from std_msgs.msg import String
+from walkyto.srv import *
 
 
 def manual():
@@ -85,70 +89,85 @@ def gazebo_clear():
 
 
 def motion_tester():
-	gazebo_pid = os.fork(); simulator_pid = os.fork()
-	if gazebo_pid == 0:
-		os.execvp("roslaunch", ('roslaunch', 'walkyto', 'gazebo_empty'))
+	core_pid = os.fork()
+	if core_pid == 0:
+		c_log = os.open("core_log", os.O_RDWR|os.O_CREAT)
+		os.close(sys.__stdout__.fileno());os.close(sys.__stderr__.fileno())
+		os.dup(c_log);os.dup(c_log)
+		os.execlp("roscore", 'roscore')
 		sys.exit()
-	elif simulator_pid == 0:
+
+	gazebo_pid = os.fork()
+	if gazebo_pid == 0:
+		time.sleep(4)
+
+		g_log = os.open("gazebo_log", os.O_RDWR|os.O_CREAT)
+		os.close(sys.__stdout__.fileno());os.close(sys.__stderr__.fileno())
+		os.dup(g_log);os.dup(g_log)
+
+		os.execvp("roslaunch", ('roslaunch', 'walkyto', 'gazebo_empty.launch'))
+		sys.exit()
+
+	simulator_pid = os.fork()
+	if simulator_pid == 0:
+		time.sleep(8)
+		s_log = os.open("simulator_log", os.O_RDWR|os.O_CREAT)
+		os.close(sys.__stdout__.fileno());os.close(sys.__stderr__.fileno())
+		os.dup(s_log);os.dup(s_log)
+
 		os.execvp("roslaunch", ('roslaunch','walkyto','motion_test.launch'))
 		sys.exit()
-	else:
-		while True:
-			most_gene, config = extract_gene()
-			gene_num = input("which genome?\n\
-								0: gene_0\n\
-								1: gene_1\n\
-								2: gene_2\n\
-								3: gene_3\n\
-								4: gene_4\n\
-								5: all_gene\n\
-								6: quit\n:")
 
-			if gene_num != 5:
-				for i in range(5):
-					gen_file = open("%s/src/genes/%d" % (getenv(WALKYTO_PATH),i),'w')
-					pickle.dump(most_gene[i], gen_file)
+	time.sleep(10)
+	while True:
+		most_gene, config = extract_gene()
+		gene_num = input("which genome?\n0: gene_0\n1: gene_1\n2: gene_2\n3: gene_3\n4: gene_4\n5: all_gene\n6: quit\n:")
 
-				gene_string = str(most_gene.pop())
-				while len(most_gene) > 0:
-					gene_string = gene_string + '/' + str(most_gene.pop())
-				
+		if gene_num != 5:
+			for i in range(5):
+				gen_file = open("%s/src/genes/%d" % (os.getenv('WALKYTO_PATH'),i),'w')
+				pickle.dump(most_gene[i], gen_file)
 
-				fcnt = 0; fit_list=[]
-				while fcnt < 5:
-					gene_id_publisher('-%d'%fcnt)
-					fitness = fit_caller(fcnt+1)
-					if fitness != -1:
-						fit_list.append(fitness)
-						fcnt = fcnt + 1
-					else:
-						time.sleep(0.2)
+			gene_string = str(most_gene.pop())
+			while len(most_gene) > 0:
+				gene_string = gene_string + '/' + str(most_gene.pop())
+			
 
-				gazebo_clear()
-				print("fit:", fit_list)
+			fcnt = 0; fit_list=[]
+			while fcnt < 5:
+				gene_id_publisher('-%d'%fcnt)
+				fitness = fit_caller(fcnt+1)
+				if fitness != -1:
+					fit_list.append(fitness)
+					fcnt = fcnt + 1
+				else:
+					time.sleep(0.2)
 
-			elif gene_num==0 or gene_num==1 or gene_num==2 or gene_num==3 or gene_num==4:
-				gen_file = open("%s/src/genes/%d" % (getenv(WALKYTO_PATH),gene_num),'w')
-				pickle.dump(most_gene[gene_num], gen_file)
+			gazebo_clear()
+			print("fit:", fit_list)
 
-				gene_string = str(most_gene[gene_num])
+		elif gene_num==0 or gene_num==1 or gene_num==2 or gene_num==3 or gene_num==4:
+			gen_file = open("%s/src/genes/%d" % (os.getenv('WALKYTO_PATH'),gene_num),'w')
+			pickle.dump(most_gene[gene_num], gen_file)
 
-				fcnt = 0; fit_list=[]
-				while fcnt == 0:
-					gene_id_publisher('-%d'%fcnt)
-					fitness = fit_caller(fcnt+1)
-					if fitness != -1:
-						fit_list.append(fitness)
-						fcnt = fcnt + 1
-					else:
-						time.sleep(0.2)
+			gene_string = str(most_gene[gene_num])
 
-				gazebo_clear()
-				print("fit:", fit_list)
+			fcnt = 0; fit_list=[]
+			while fcnt == 0:
+				gene_id_publisher('-%d'%fcnt)
+				fitness = fit_caller(fcnt+1)
+				if fitness != -1:
+					fit_list.append(fitness)
+					fcnt = fcnt + 1
+				else:
+					time.sleep(0.2)
 
-			else:
-				os.kill(gazebo_pid, sgnal.SIGINT); os.kill(simulator_pid, signal.SIGINT)
-				return
+			gazebo_clear()
+			print("fit:", fit_list)
+
+		else:
+			os.kill(gazebo_pid, signal.SIGINT); os.kill(simulator_pid, signal.SIGINT); os.kill(core_pid, signal.SIGINT)
+			return
 
 
 #==========================================================================================

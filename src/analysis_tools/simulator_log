@@ -1,77 +1,17 @@
-DeleteModel: model does not exist
-SpawnModel: Successfully spawned model
-DeleteModel: model does not exist
-SpawnModel: Successfully spawned model
-DeleteModel: model does not exist
-SpawnModel: Successfully spawned model
-DeleteModel: model does not exist
-SpawnModel: Successfully spawned model
-DeleteModel: model does not exist
-SpawnModel: Successfully spawned model
-... logging to /home/cun/.ros/log/d427c758-c9e0-11e7-af43-88532ec08a55/roslaunch-cun-15059.log
-Checking log directory for disk usage. This may take awhile.
-Press Ctrl-C to interrupt
-Done checking log file disk usage. Usage is <1GB.
-]2;/home/cun/catkin_ws/src/walkyto/launch/motion_test.launch
-[1mstarted roslaunch server http://localhost:46702/[0m
-
-SUMMARY
-========
-
-PARAMETERS
- * /rosdistro: kinetic
- * /rosversion: 1.12.6
-
-NODES
-  /
-    simulator1 (walkyto/simulator.py)
-    simulator2 (walkyto/simulator.py)
-    simulator3 (walkyto/simulator.py)
-    simulator4 (walkyto/simulator.py)
-    simulator5 (walkyto/simulator.py)
-
-[1mROS_MASTER_URI=http://localhost:11311[0m
-]2;/home/cun/catkin_ws/src/walkyto/launch/motion_test.launch http://localhost:11311
-core service [/rosout] found
-[1mprocess[simulator1-1]: started with pid [15307][0m
-[1mprocess[simulator2-2]: started with pid [15308][0m
-[1mprocess[simulator3-3]: started with pid [15309][0m
-[1mprocess[simulator4-4]: started with pid [15312][0m
-[1mprocess[simulator5-5]: started with pid [15315][0m
-[simulator4-4] killing on exit
-[simulator5-5] killing on exit
-[simulator3-3] killing on exit
-[simulator2-2] killing on exit
-[simulator1-1] killing on exit
-shutting down processing monitor...
-... shutting down processing monitor complete
-[1mdone[0m
-elete_model('%s_%d' % (self.model_name, self.dup_num))
-  File "/home/cun/catkin_ws/src/walkyto/src/delete_model_client.py", line 8, in delete_model
-    rospy.wait_for_service('gazebo/delete_model')
-  File "/opt/ros/kinetic/lib/python2.7/dist-packages/rospy/impl/tcpros_service.py", line 159, in wait_for_service
-    raise ROSInterruptException("rospy shutdown")
-rospy.exceptions.ROSInterruptException: rospy shutdown
-        raise ROSInterruptException("rospy shutdown")
-raise ROSInterruptException("rospy shutdown")
-rospy.exceptionsrospy.exceptions..ROSInterruptExceptionROSInterruptException: : rospy shutdownrospy shutdown
-
+X Error of failed request:  BadDrawable (invalid Pixmap or Window parameter)
+  Major opcode of failed request:  153 (DRI2)
+  Minor opcode of failed request:  3 (DRI2CreateDrawable)
+  Resource id in failed request:  0x2800002
+  Serial number of failed request:  31
+  Current serial number in output stream:  33
+terminate called after throwing an instance of 'boost::exception_detail::clone_impl<boost::exception_detail::error_info_injector<boost::lock_error> >'
+  what():  boost: mutex lock failed in pthread_mutex_lock: Invalid argument
+[0m[ INFO] [1511506956.633635882]: Finished loading Gazebo ROS API Plugin.[0m
+[0m[ INFO] [1511506956.653718224]: waitForService: Service [/gazebo/set_physics_properties] has not been advertised, waiting...[0m
 Traceback (most recent call last):
-  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 244, in <module>
+  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 208, in <module>
     sim = simulator('%s'%model_name, dup_num)
-  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 221, in __init__
-    self.gazebo_exit()
-  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 45, in gazebo_exit
-    delete_model('%s_%d' % (self.model_name, self.dup_num))
-  File "/home/cun/catkin_ws/src/walkyto/src/delete_model_client.py", line 8, in delete_model
-    rospy.wait_for_service('gazebo/delete_model')
-  File "/opt/ros/kinetic/lib/python2.7/dist-packages/rospy/impl/tcpros_service.py", line 159, in wait_for_service
-Traceback (most recent call last):
-  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 244, in <module>
-    raise ROSInterruptException("rospy shutdown")
-rospy.exceptions.ROSInterruptException:     rospy shutdownsim = simulator('%s'%model_name, dup_num)
-
-  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 221, in __init__
+  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 192, in __init__
     self.gazebo_exit()
   File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 45, in gazebo_exit
     delete_model('%s_%d' % (self.model_name, self.dup_num))
@@ -80,12 +20,77 @@ rospy.exceptions.ROSInterruptException:     rospy shutdownsim = simulator('%s'%m
   File "/opt/ros/kinetic/lib/python2.7/dist-packages/rospy/impl/tcpros_service.py", line 159, in wait_for_service
     raise ROSInterruptException("rospy shutdown")
 rospy.exceptions.ROSInterruptException: rospy shutdown
-... logging to /home/cun/.ros/log/c931a81e-c9e0-11e7-af43-88532ec08a55/roslaunch-cun-14713.log
+Traceback (most recent call last):
+  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 208, in <module>
+    sim = simulator('%s'%model_name, dup_num)
+  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 192, in __init__
+    self.gazebo_exit()
+  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 45, in gazebo_exit
+    delete_model('%s_%d' % (self.model_name, self.dup_num))
+  File "/home/cun/catkin_ws/src/walkyto/src/delete_model_client.py", line 8, in delete_model
+    rospy.wait_for_service('gazebo/delete_model')
+  File "/opt/ros/kinetic/lib/python2.7/dist-packages/rospy/impl/tcpros_service.py", line 159, in wait_for_service
+    raise ROSInterruptException("rospy shutdown")
+rospy.exceptions.ROSInterruptException: rospy shutdown
+Traceback (most recent call last):
+  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 208, in <module>
+    sim = simulator('%s'%model_name, dup_num)
+  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 192, in __init__
+    self.gazebo_exit()
+  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 45, in gazebo_exit
+    delete_model('%s_%d' % (self.model_name, self.dup_num))
+  File "/home/cun/catkin_ws/src/walkyto/src/delete_model_client.py", line 8, in delete_model
+    rospy.wait_for_service('gazebo/delete_model')
+  File "/opt/ros/kinetic/lib/python2.7/dist-packages/rospy/impl/tcpros_service.py", line 159, in wait_for_service
+    raise ROSInterruptException("rospy shutdown")
+rospy.exceptions.ROSInterruptException: rospy shutdown
+Traceback (most recent call last):
+  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 208, in <module>
+    sim = simulator('%s'%model_name, dup_num)
+  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 192, in __init__
+    self.gazebo_exit()
+  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 45, in gazebo_exit
+    delete_model('%s_%d' % (self.model_name, self.dup_num))
+  File "/home/cun/catkin_ws/src/walkyto/src/delete_model_client.py", line 8, in delete_model
+    rospy.wait_for_service('gazebo/delete_model')
+  File "/opt/ros/kinetic/lib/python2.7/dist-packages/rospy/impl/tcpros_service.py", line 159, in wait_for_service
+    raise ROSInterruptException("rospy shutdown")
+rospy.exceptions.ROSInterruptException: rospy shutdown
+Traceback (most recent call last):
+  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 208, in <module>
+    sim = simulator('%s'%model_name, dup_num)
+  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 192, in __init__
+    self.gazebo_exit()
+  File "/home/cun/catkin_ws/src/walkyto/src/simulator.py", line 45, in gazebo_exit
+    delete_model('%s_%d' % (self.model_name, self.dup_num))
+  File "/home/cun/catkin_ws/src/walkyto/src/delete_model_client.py", line 8, in delete_model
+    rospy.wait_for_service('gazebo/delete_model')
+  File "/opt/ros/kinetic/lib/python2.7/dist-packages/rospy/impl/tcpros_service.py", line 159, in wait_for_service
+    raise ROSInterruptException("rospy shutdown")
+rospy.exceptions.ROSInterruptException: rospy shutdown
+Aborted (core dumped)
+[31m[simulator4-5] escalating to SIGTERM[0m
+[31m[simulator3-4] escalating to SIGTERM[0m
+[31m[simulator2-3] escalating to SIGTERM[0m
+[31m[simulator5-6] escalating to SIGTERM[0m
+[31m[simulator1-2] escalating to SIGTERM[0m
+[31m[simulator4-5] escalating to SIGKILL[0m
+[31m[simulator2-3] escalating to SIGKILL[0m
+[31m[simulator3-4] escalating to SIGKILL[0m
+[31m[simulator1-2] escalating to SIGKILL[0m
+[31m[simulator5-6] escalating to SIGKILL[0m
+[31mShutdown errors:
+ * process[simulator5-6, pid 4703]: required SIGKILL. May still be running.
+ * process[simulator4-5, pid 4700]: required SIGKILL. May still be running.
+ * process[simulator3-4, pid 4697]: required SIGKILL. May still be running.
+ * process[simulator2-3, pid 4696]: required SIGKILL. May still be running.
+ * process[simulator1-2, pid 4695]: required SIGKILL. May still be running.[0m
+... logging to /home/cun/.ros/log/1398de66-d12c-11e7-a030-88532ec08a55/roslaunch-cun-4660.log
 Checking log directory for disk usage. This may take awhile.
 Press Ctrl-C to interrupt
 Done checking log file disk usage. Usage is <1GB.
 ]2;/home/cun/catkin_ws/src/walkyto/launch/motion_test.launch
-[1mstarted roslaunch server http://localhost:34091/[0m
+[1mstarted roslaunch server http://localhost:45995/[0m
 
 SUMMARY
 ========
@@ -93,9 +98,11 @@ SUMMARY
 PARAMETERS
  * /rosdistro: kinetic
  * /rosversion: 1.12.6
+ * /use_sim_time: True
 
 NODES
   /
+    gazebo (gazebo_ros/gzserver)
     simulator1 (walkyto/simulator.py)
     simulator2 (walkyto/simulator.py)
     simulator3 (walkyto/simulator.py)
@@ -105,16 +112,18 @@ NODES
 [1mROS_MASTER_URI=http://localhost:11311[0m
 ]2;/home/cun/catkin_ws/src/walkyto/launch/motion_test.launch http://localhost:11311
 core service [/rosout] found
-[1mprocess[simulator1-1]: started with pid [14829][0m
-[1mprocess[simulator2-2]: started with pid [14830][0m
-[1mprocess[simulator3-3]: started with pid [14831][0m
-[1mprocess[simulator4-4]: started with pid [14832][0m
-[1mprocess[simulator5-5]: started with pid [14833][0m
-[simulator5-5] killing on exit
-[simulator4-4] killing on exit
-[simulator3-3] killing on exit
-[simulator2-2] killing on exit
-[simulator1-1] killing on exit
+[1mprocess[gazebo-1]: started with pid [4688][0m
+[1mprocess[simulator1-2]: started with pid [4695][0m
+[1mprocess[simulator2-3]: started with pid [4696][0m
+[1mprocess[simulator3-4]: started with pid [4697][0m
+[1mprocess[simulator4-5]: started with pid [4700][0m
+[1mprocess[simulator5-6]: started with pid [4703][0m
+[simulator5-6] killing on exit
+[simulator4-5] killing on exit
+[simulator3-4] killing on exit
+[simulator2-3] killing on exit
+[simulator1-2] killing on exit
+[gazebo-1] killing on exit
 shutting down processing monitor...
 ... shutting down processing monitor complete
 [1mdone[0m

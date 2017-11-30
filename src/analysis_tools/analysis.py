@@ -3,8 +3,10 @@ import pickle,sys, os, time, signal
 import rospy
 
 from std_msgs.msg import String
+from std_srvs.srv import Empty
 from walkyto.srv import *
 
+from termcolor import cprint
 
 def manual():
 	print("\n"),
@@ -20,7 +22,7 @@ def manual():
 def extract_gene():
 	filename = input("Drag the stats file and press the enter\n(to quit, enter 'q' including quotation)\n:")
 	if filename =="q":
-		sys.exit(1)
+		return False,False
 
 	stat_file = open(filename)
 	stats = pickle.load(stat_file)
@@ -43,6 +45,8 @@ def network_visualizer():
 	while True:
 		print("\n"),
 		most_gene, config = extract_gene()
+		if most_gene == False:
+			return
 
 		node_names = {-1:'ML-0(I)', -2:'ML-1(I)', -3:'ML-2(I)', -4:'ML-3(I)',-5:'ML-4(I)',
 						-6:'MR-5(I)',-7:'MR-6(I)',-8:'MR-7(I)',-9:'MR-8(I)',-10:'MR-9(I)',
@@ -87,87 +91,122 @@ def gazebo_clear():
 	except rospy.ServiceException, e:
 		print "Service call failed: %s"%e
 
-
 def motion_tester():
 	core_pid = os.fork()
 	if core_pid == 0:
-		c_log = os.open("core_log", os.O_RDWR|os.O_CREAT)
-		os.close(sys.__stdout__.fileno());os.close(sys.__stderr__.fileno())
-		os.dup(c_log);os.dup(c_log)
+		c_log = os.open("core_log", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
+		os.close(sys.__stdout__.fileno());os.dup(c_log)
+		os.close(sys.__stderr__.fileno());os.dup(c_log)
+
 		os.execlp("roscore", 'roscore')
-		sys.exit()
-
-	gazebo_pid = os.fork()
-	if gazebo_pid == 0:
-		time.sleep(4)
-
-		g_log = os.open("gazebo_log", os.O_RDWR|os.O_CREAT)
-		os.close(sys.__stdout__.fileno());os.close(sys.__stderr__.fileno())
-		os.dup(g_log);os.dup(g_log)
-
-		os.execvp("roslaunch", ('roslaunch', 'walkyto', 'gazebo_empty.launch'))
 		sys.exit()
 
 	simulator_pid = os.fork()
 	if simulator_pid == 0:
-		time.sleep(8)
-		s_log = os.open("simulator_log", os.O_RDWR|os.O_CREAT)
-		os.close(sys.__stdout__.fileno());os.close(sys.__stderr__.fileno())
-		os.dup(s_log);os.dup(s_log)
+		time.sleep(3)
+		s_log = os.open("simulator_log", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
+		os.close(sys.__stdout__.fileno());os.dup(s_log)
+		os.close(sys.__stderr__.fileno());os.dup(s_log)
 
 		os.execvp("roslaunch", ('roslaunch','walkyto','motion_test.launch'))
 		sys.exit()
 
-	time.sleep(10)
+	cprint("boot on the gazebo & simulators(12s)", 'blue', 'on_white')
+	for i in range(12):
+		time.sleep(1)
+		os.write(sys.__stderr__.fileno(),"###")
+		if i == 9:
+			client_pid = os.fork()
+			if client_pid == 0:
+				c_log = os.open("client_log", os.O_RDWR|os.O_CREAT|os.O_TRUNC)
+				os.close(sys.__stdout__.fileno());os.close(sys.__stderr__.fileno())
+				stdout = os.dup(c_log);stderr = os.dup(c_log)
+
+				os.execvp("roslaunch", ('roslaunch', 'walkyto', 'gzclient.launch'))
+				sys.exit()
+	print("\n"),
+
+
+	rospy.init_node('analyst')
 	while True:
 		most_gene, config = extract_gene()
-		gene_num = input("which genome?\n0: gene_0\n1: gene_1\n2: gene_2\n3: gene_3\n4: gene_4\n5: all_gene\n6: quit\n:")
+		if most_gene == False:
+			break
 
-		if gene_num != 5:
+		while True:
+			print("which genome?")
+
 			for i in range(5):
-				gen_file = open("%s/src/genes/%d" % (os.getenv('WALKYTO_PATH'),i),'w')
-				pickle.dump(most_gene[i], gen_file)
+				print("%d) gene_%d(%f)"%(i,i, most_gene[i].fitness))
+			gene_num = input("5) all\n6) quit\n\n:")
 
-			gene_string = str(most_gene.pop())
-			while len(most_gene) > 0:
-				gene_string = gene_string + '/' + str(most_gene.pop())
-			
 
-			fcnt = 0; fit_list=[]
-			while fcnt < 5:
-				gene_id_publisher('-%d'%fcnt)
-				fitness = fit_caller(fcnt+1)
-				if fitness != -1:
-					fit_list.append(fitness)
-					fcnt = fcnt + 1
-				else:
-					time.sleep(0.2)
+			if gene_num == 5:
+				for i in range(5):
+					time.sleep(0.1)
+					gene_id_publisher('-')
+				gazebo_clear()
+				for i in range(5):
+					gen_file = open("%s/src/genes/%d" % (os.getenv('WALKYTO_PATH'),i),'w')
+					pickle.dump(most_gene[i], gen_file)
+					gen_file.close()
 
-			gazebo_clear()
-			print("fit:", fit_list)
+				gene_string = '0/1/2/3/4'
 
-		elif gene_num==0 or gene_num==1 or gene_num==2 or gene_num==3 or gene_num==4:
-			gen_file = open("%s/src/genes/%d" % (os.getenv('WALKYTO_PATH'),gene_num),'w')
-			pickle.dump(most_gene[gene_num], gen_file)
+				print("gene_id:", gene_string)
+				gene_id_publisher(gene_string)
 
-			gene_string = str(most_gene[gene_num])
+				fcnt = 0; fit_list=[]
+				while fcnt < 5:
+					gene_id_publisher('-%d'%fcnt)
+					fitness = fit_caller(fcnt+1)
+					if fitness != -1:
+						fit_list.append(fitness)
+						fcnt = fcnt + 1
+					else:
+						now = rospy.get_rostime()
+						if now.secs%10 == 0 :
+							rospy.loginfo("Current time %i %.3i", now.secs, now.nsecs)
+						time.sleep(0.5)
 
-			fcnt = 0; fit_list=[]
-			while fcnt == 0:
-				gene_id_publisher('-%d'%fcnt)
-				fitness = fit_caller(fcnt+1)
-				if fitness != -1:
-					fit_list.append(fitness)
-					fcnt = fcnt + 1
-				else:
-					time.sleep(0.2)
+				print("fit:", fit_list)
 
-			gazebo_clear()
-			print("fit:", fit_list)
+			elif gene_num==0 or gene_num==1 or gene_num==2 or gene_num==3 or gene_num==4:
+				for i in range(5):
+					time.sleep(0.1)
+					gene_id_publisher('-')
+				gazebo_clear()
+				gen_file = open("%s/src/genes/%d" % (os.getenv('WALKYTO_PATH'),gene_num),'w')
+				pickle.dump(most_gene[gene_num], gen_file)
+				gen_file.close()
 
-		else:
-			os.kill(gazebo_pid, signal.SIGINT); os.kill(simulator_pid, signal.SIGINT); os.kill(core_pid, signal.SIGINT)
-			return
+				gene_string = '%s/-1/-1/-1/-1'%str(gene_num)
+				print("gene_id:", str(gene_num))
+				gene_id_publisher(gene_string)
+
+				fcnt = 0; fit_list=[]
+				while fcnt == 0:
+					gene_id_publisher('-%d'%fcnt)
+					fitness = fit_caller(fcnt+1)
+					if fitness != -1:
+						fit_list.append(fitness)
+						fcnt = fcnt + 1
+					else:
+						now = rospy.get_rostime()
+						if now.secs%10 == 0 :
+							rospy.loginfo("Current time %i %.3i", now.secs, now.nsecs)
+						time.sleep(0.5)
+
+				print("fit:", fit_list)
+			else:
+				break
+
+	os.kill(simulator_pid, signal.SIGINT); os.kill(client_pid, signal.SIGINT)
+	cprint("boot down the gazebo & simulators(5s)", 'blue', 'on_white')
+	for i in range(5):
+		time.sleep(1)
+		os.write(sys.__stderr__.fileno(),"#######")
+	print("##\n"),
 
 
 #==========================================================================================
@@ -190,9 +229,11 @@ if __name__ == '__main__':
 				motion_tester()
 				sys.exit()
 			cur_child_cnt += 1
-
+		elif selected == 3:
+			print("\nit is not completed function")
 		else:
-			print("\n!!wrong typed!!")
+			print("\n!!wrong typed!! I'm gonna exit")
+			sys.exit()
 
 		if cur_child_cnt > 0:
 			os.wait()

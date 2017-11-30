@@ -1,0 +1,26 @@
+... logging to /home/cun/.ros/log/1398de66-d12c-11e7-a030-88532ec08a55/roslaunch-cun-4907.log
+Checking log directory for disk usage. This may take awhile.
+Press Ctrl-C to interrupt
+Done checking log file disk usage. Usage is <1GB.
+]2;/home/cun/catkin_ws/src/walkyto/launch/gzclient.launch
+[1mstarted roslaunch server http://localhost:35931/[0m
+
+SUMMARY
+========
+
+PARAMETERS
+ * /rosdistro: kinetic
+ * /rosversion: 1.12.6
+
+NODES
+  /
+    gz (gazebo_ros/gzclient)
+
+[1mROS_MASTER_URI=http://localhost:11311[0m
+]2;/home/cun/catkin_ws/src/walkyto/launch/gzclient.launch http://localhost:11311
+core service [/rosout] found
+[1mprocess[gz-1]: started with pid [4934][0m
+[gz-1] killing on exit
+shutting down processing monitor...
+... shutting down processing monitor complete
+[1mdone[0m

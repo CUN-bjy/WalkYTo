@@ -1,10 +1,10 @@
 <launch>
-<!--   <arg name="GUI" default="true"/>
+  <arg name="GUI" default="false"/>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(find walkyto)/worlds/motion_test.world"/>
     <arg name="gui" value="$(arg GUI)"/>
-  </include> -->
+  </include>
 
   <arg name="model" value="MS_Faraday_imu"/>
   <arg name="dup" value="5"/>

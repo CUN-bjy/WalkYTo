@@ -1,9 +1,11 @@
-... logging to /home/cun/.ros/log/d427c758-c9e0-11e7-af43-88532ec08a55/roslaunch-cun-15057.log
+[31m[master] process has died [pid 3030, exit code -15, cmd rosmaster --core -p 11311 -w 3 __log:=/home/cun/.ros/log/1398de66-d12c-11e7-a030-88532ec08a55/master.log].
+log file: /home/cun/.ros/log/1398de66-d12c-11e7-a030-88532ec08a55/master*.log[0m
+... logging to /home/cun/.ros/log/1398de66-d12c-11e7-a030-88532ec08a55/roslaunch-cun-3018.log
 Checking log directory for disk usage. This may take awhile.
 Press Ctrl-C to interrupt
 Done checking log file disk usage. Usage is <1GB.
 ]2;roscore
-[1mstarted roslaunch server http://localhost:38156/[0m
+[1mstarted roslaunch server http://localhost:37476/[0m
 ros_comm version 1.12.6
 
 
@@ -17,11 +19,11 @@ PARAMETERS
 NODES
 
 auto-starting new master
-[1mprocess[master]: started with pid [15070][0m
+[1mprocess[master]: started with pid [3030][0m
 [1mROS_MASTER_URI=http://localhost:11311/[0m
 ]2;roscore http://localhost:11311/
-[1msetting /run_id to d427c758-c9e0-11e7-af43-88532ec08a55[0m
-[1mprocess[rosout-1]: started with pid [15083][0m
+[1msetting /run_id to 1398de66-d12c-11e7-a030-88532ec08a55[0m
+[1mprocess[rosout-1]: started with pid [3043][0m
 started core service [/rosout]
 [rosout-1] killing on exit
 [master] killing on exit

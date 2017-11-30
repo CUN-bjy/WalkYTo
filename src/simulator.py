@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 import neat, visualize
-import os, pickle, sys
+import os, pickle, sys, numpy as np
 import rospy
 import math, random
 
+from quaternion import dotted_func
 from gazebo_msgs.srv import *
 from gazebo_msgs.msg import *
 from walkyto.srv import *
@@ -43,38 +44,11 @@ class simulator:
 
 	def gazebo_exit(self):
 		delete_model('%s_%d' % (self.model_name, self.dup_num))
-
-	def set_world_state(self, state):
-		model_name = '%s_%d' % (self.model_name, self.dup_num)
-
-		for key in list(self.link_reference.keys()):
-			link_name = key
-			reference_name = self.link_reference[key]
-			joint_name = '%s::%s'%(model_name,link_name)
-			ref_joint_name = '%s::%s'%(model_name,reference_name)
-
-			if joint_name in state.name:
-				pose = state.pose[state.name.index(joint_name)]
-				twist = Twist(Vector3(0,0,0), Vector3(0,0,0))
-				lstate = LinkState(joint_name,pose,twist,ref_joint_name)
-
-				rospy.wait_for_service('gazebo/set_link_state')
-				try:
-					set_state = rospy.ServiceProxy('gazebo/set_link_state', SetLinkState)
-
-					resp = set_state.call(SetLinkStateRequest(lstate))
-
-
-				except rospy.ServiceException, e:
-					print "Service call failed: %s"%e
-
-		print "%s -- set state!"%model_name
 	##############################################################################################################
 
 	def state_getter(self, data):
-		self.link_state = data
 		model_name = '%s_%d' % (self.model_name, self.dup_num)
-		vel_list = [0,0,0,0,0,0,0,0,0,0]
+		vel_list = [0,0,0,0,0,0,0,0,0,0]; q_list = [0,0,0,0,0,0,0,0,0,0]
 
 		for key in list(self.link_reference.keys()):
 			link_name = key
@@ -88,8 +62,22 @@ class simulator:
 
 				vel = math.sqrt((twist.x-ref_twist.x)**2+(twist.y-ref_twist.y)**2+(twist.z-ref_twist.z)**2)
 				vel_list[int(key[3])] = vel
+				#=========================================================================================================
+				orientation = data.pose[data.name.index(joint_name)].orientation
+				ref_orientation = data.pose[data.name.index(ref_joint_name)].orientation
 
-		self.joint_states = vel_list
+				q2_vec = np.array([orientation.x,orientation.y,orientation.z]); q2_0 = orientation.w
+				q1_vec = np.array([ref_orientation.x,ref_orientation.y,ref_orientation.z]); q1_0 = ref_orientation.w
+
+				rel_q_w = q1_0*q2_0 + np.dot(q1_vec, q2_vec)
+				# rel_q_vec = - q1_0*q2_vec + q2_0*q1_vec + np.cross(q2_vec, q1_vec)
+				q_list[int(key[3])] = math.acos(rel_q_w)*2
+
+		dotted = dotted_func(self, data)
+		for i in range(10):
+			q_list[i] *= dotted[i]
+
+		self.joint_states = list(vel_list)+list(q_list)
 		
 
 
@@ -117,6 +105,10 @@ class simulator:
 	##############################################################################################################
 	def string_decoder(self, g_str):
 		g_str = str(g_str.data).split('/')
+		# for g in g_str:
+		# 	if g == '-1':
+		# 		continue
+		# 	os.write(sys.__stderr__.fileno(), "[%d:%s]"%(self.dup_num,g))
 		if len(g_str) > (self.dup_num-1):
 			return g_str[self.dup_num-1]
 		else:
@@ -135,11 +127,13 @@ class simulator:
 
 		gene_dir = os.getenv("WALKYTO_PATH")
 		gene_id = self.string_decoder(data)
-		if gene_id == -1:
+		if gene_id == -1 or gene_id == '-1':
 			return
+		# os.write(sys.__stderr__.fileno(), "%s\n"%gene_id)
 
-		gene_f = open('%s/src/genes/%s' % (gene_dir, gene_id))
+		gene_f = open('%s/src/genes/%s' % (gene_dir, gene_id),'rb')
 		genome = pickle.load(gene_f)
+		gene_f.close()
 
 		net = neat.nn.FeedForwardNetwork.create(genome, config)
 		#nn.recurrent.RecurrentNetwork ************** param3
@@ -168,16 +162,10 @@ class simulator:
 				now = now + gap - duration
 
 
-		 	#print self.dup_num, gap.to_sec(), then.to_sec(), now.to_sec()
+		 	# print self.dup_num, gap.to_sec(), then.to_sec(), now.to_sec()
 		 	
 		#--------------------------------------------------------------------------------------------------	
 		pos_end = self.get_pose()
-
-		# self.world_clear()
-		# if self.init_state != None:
-		# 	print len(self.init_state.name)
-		# 	self.set_world_state(self.init_state)
-		#self.gazebo_exit()
 
 		dist = (pos_end.x - pos_init.x)
 
@@ -199,7 +187,6 @@ class simulator:
 		self.dup_num = int(model_name.split('_')[-1])
 		self.joint_states = None
 		self.fitness = None		
-		self.init_state=None
 
 
 		if self.model_name == 'MS_Faraday_imu':
@@ -210,10 +197,8 @@ class simulator:
 			print 'there is not link_reference of %s' % self.model_name
 			sys.exit()
 
-		# self.gazebo_exit()
 		rospy.init_node('simulator%d' % self.dup_num)
 		
-
 		
 		rospy.Subscriber('/gazebo/link_states', LinkStates, self.state_getter)
 
@@ -224,14 +209,6 @@ class simulator:
 		rospy.Subscriber('gene_pub', String, self.call_simulate)
 		s=rospy.Service('sim_run%d' % self.dup_num, SimRun, self.fit_server)
 
-		rate1=rospy.Rate(2)
-		for i in range(20):
-			rate1.sleep()
-		self.init_state = self.link_state
-		
-		while(len(self.init_state.name) < self.dup_num*20):
-			self.init_state = self.link_state
-
 		
 		rospy.spin()
 
@@ -240,5 +217,6 @@ if __name__ == '__main__':
 	argv = rospy.myargv()
 	model_name = argv[1]
 	dup_num = argv[2]
+
 
 	sim = simulator('%s'%model_name, dup_num)

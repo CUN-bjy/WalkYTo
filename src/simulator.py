@@ -35,7 +35,7 @@ class simulator:
 		model_name = '%s_%d' % (self.model_name, self.dup_num)
 		robot_namespace = model_name
 
-		pos = position(0, (self.dup_num-1)*18 - (self.total_dup-1)*9, 0)
+		pos = position(0, (self.dup_num-1)*1.8 - (self.total_dup-1)*0.9, 0)
 		orient = orientation(0, 0, 0, 0)
 		initial_pose = pose(pos, orient)
 		reference_frame=''
@@ -147,8 +147,13 @@ class simulator:
 		pos_init = self.get_pose()
 		#--------------------------------------------------------------------------------------------------
 		dur = rospy.Duration(0.3); gap = rospy.Duration(0)
+		MAX_TORQUE = 3.0
 		while(then > now):
 		 	joint_efforts = net.activate(self.joint_states)
+		 	for i in range(10):
+		 		if joint_efforts[i] > MAX_TORQUE:
+		 			joint_efforts[i] = MAX_TORQUE
+
 		 	self.efforts_caller(joint_efforts, dur)#0.05sec
 		 	rospy.sleep(dur)
 		 	# print "input:", self.joint_states
@@ -189,7 +194,7 @@ class simulator:
 		self.fitness = None		
 
 
-		if self.model_name == 'MS_Faraday_imu':
+		if self.model_name == 'MS_Faraday_d':
 			self.link_reference = {'ML-0':'CORE','ML-1':'L2',	'ML-2':'L3-1','ML-3':'L3-1',
 							'ML-4':'L4','MR-5':'CORE','MR-6':'R2','MR-7':'R3-1',
 							'MR-8':'R3-1','MR-9':'R4'}

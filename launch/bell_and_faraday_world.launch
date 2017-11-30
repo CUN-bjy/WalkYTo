@@ -6,9 +6,9 @@
     <arg name="gui" value="$(arg GUI)"/>
   </include>
 
-  <arg name="model" value="MS_Faraday_imu"/>
+  <arg name="model" value="MS_Faraday_d"/>
   <arg name="dup" value="8"/>
-  <arg name="max_iter" value="350"/>
+  <arg name="max_iter" value="700"/>
   <arg name="gen_op" value="-r"/>
   <arg name="ckp_name" value="neat-checkpoint-104"/>
 
